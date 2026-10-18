@@ -173,7 +173,7 @@ func Judge(in *Info) Verdict {
 		if sign.Kind == SignerAppStore {
 			who = "the Mac App Store"
 		}
-		v.Headline = "Signed software from " + nonEmpty(who, "an identified developer") + "."
+		v.Headline = "Signed software from " + strings.TrimSuffix(nonEmpty(who, "an identified developer"), ".") + "."
 	case LevelUnverified:
 		v.Headline = "Can't confirm who made this. Not necessarily bad; see why below."
 	case LevelSuspicious:

@@ -76,6 +76,7 @@ type Process struct {
 	Name    string
 	Command string // full command line
 	Kind    Kind
+	Detail  string // what a generic runtime (java, node, python…) is running
 }
 
 func (p Process) Key() string { return fmt.Sprintf("%d:%s", p.PID, p.Path) }
@@ -156,6 +157,7 @@ func List(ctx context.Context) ([]Process, error) {
 			p.Command = comm
 		}
 		p.Kind = classify(p, home)
+		p.Detail = runtimeDetail(p)
 		procs = append(procs, p)
 	}
 	return procs, nil
@@ -242,4 +244,22 @@ func execPath(pid int) string {
 		}
 	}
 	return ""
+}
+
+// runtimeDetail names what a generic runtime process is actually running, so
+// a dozen "java" rows are distinguishable in the list.
+func runtimeDetail(p Process) string {
+	exe := strings.ToLower(filepath.Base(p.Path))
+	if !(strings.HasPrefix(exe, "java") || strings.HasPrefix(exe, "node") || strings.HasPrefix(exe, "python") ||
+		strings.HasPrefix(exe, "ruby") || exe == "deno" || exe == "bun" || strings.HasPrefix(exe, "php")) {
+		return ""
+	}
+	l := ParseLaunch(readArgv(p.PID, p.Command))
+	switch l.MainKind {
+	case "jar", "script":
+		return filepath.Base(l.Main)
+	case "inline", "":
+		return ""
+	}
+	return strings.TrimPrefix(l.Main, "clojure.main -m ")
 }

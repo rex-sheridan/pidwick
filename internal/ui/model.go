@@ -147,7 +147,7 @@ func (m *Model) rebuild() {
 			continue
 		}
 		if q != "" {
-			hay := strings.ToLower(fmt.Sprintf("%s %s %d %s", p.Name, p.Path, p.PID, p.User))
+			hay := strings.ToLower(fmt.Sprintf("%s %s %s %d %s", p.Name, p.Detail, p.Path, p.PID, p.User))
 			if !strings.Contains(hay, q) {
 				continue
 			}
@@ -556,7 +556,11 @@ func (m Model) renderList(w int) string {
 	end := min(len(m.view), m.offset+h)
 	for i := m.offset; i < end; i++ {
 		p := m.view[i]
-		name := ansi.Truncate(p.Name, w-24, "…")
+		label := p.Name
+		if p.Detail != "" {
+			label += " ▸ " + p.Detail
+		}
+		name := ansi.Truncate(label, w-24, "…")
 		tag := kindStyle(p.Kind).Render(p.Kind.Tag())
 		row := fmt.Sprintf("%s %-*s %6d %5.1f %6s", tag, w-24, name, p.PID, p.CPU, humanKB(p.RSSKB))
 		if i == m.cursor {

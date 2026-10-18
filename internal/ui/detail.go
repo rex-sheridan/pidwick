@@ -2,6 +2,7 @@ package ui
 
 import (
 	"fmt"
+	"os"
 	"path/filepath"
 	"regexp"
 	"sort"
@@ -62,7 +63,7 @@ func wrap(s string, w int, _ string) string {
 	if w < 10 {
 		w = 10
 	}
-	return strings.TrimRight(ansi.Wrap(sText.Render(s), w, "/-_ "), "\n")
+	return strings.TrimRight(ansi.Wrap(sText.Render(s), w, "/ "), "\n")
 }
 
 func truncLeft(s string, w int) string {
@@ -117,7 +118,7 @@ func renderOverview(in *proc.Info, w int) string {
 	p := in.Proc
 	v := in.Verdict
 
-	d.line(lipgloss.NewStyle().Foreground(levelColor(v.Level)).Bold(true).Render(strings.TrimSuffix(v.Headline, ".") + "."))
+	d.line(lipgloss.NewStyle().Foreground(levelColor(v.Level)).Bold(true).Render(v.Headline))
 
 	// WHAT IT IS
 	d.section("What it is")
@@ -142,6 +143,44 @@ func renderOverview(in *proc.Info, w int) string {
 			msg += " It looks like a " + in.Role + "."
 		}
 		d.para(msg)
+	}
+
+	// WHAT IT'S RUNNING (interpreted command line)
+	if l := in.Launch; l.Main != "" || l.Runtime != "" {
+		d.section("What it's running")
+		d.kv("Runtime", l.Runtime)
+		if l.Main != "" {
+			d.kv(strings.ToUpper(l.MainKind[:1])+l.MainKind[1:], sBold.Render(l.Main))
+		}
+		for _, h := range l.Hints {
+			d.para(h)
+		}
+		if len(l.JarInfo) > 0 {
+			ji := l.JarInfo
+			d.kv("Jar says", strings.TrimSpace(joinNonEmpty(" ", ji["Implementation-Title"], ji["Implementation-Version"], dashed(ji["Implementation-Vendor"]))))
+			d.kv("Main-Class", ji["Main-Class"])
+		}
+		if len(l.AppArgs) > 0 {
+			d.kv("Arguments", strings.Join(l.AppArgs, " "))
+		}
+		d.kv("Started in", tilde(in.Cwd))
+		if len(l.Options) > 0 {
+			d.kv("Options", strings.Join(l.Options, " "))
+		}
+		if len(l.Props) > 0 {
+			var ps []string
+			for _, p := range l.Props {
+				if p[1] == "" {
+					ps = append(ps, "-D"+p[0])
+				} else {
+					ps = append(ps, "-D"+p[0]+"="+tilde(p[1]))
+				}
+			}
+			d.kv("Properties", strings.Join(ps, "  "))
+		}
+		if n := len(l.Classpath); n > 0 {
+			d.kv("Classpath", describeClasspath(l.Classpath))
+		}
 	}
 
 	// WHY IT'S HERE
@@ -190,6 +229,9 @@ func renderOverview(in *proc.Info, w int) string {
 		d.para("Built into the kernel; there is no file on disk.")
 	} else {
 		d.kv("Path", p.Path)
+		if in.Launch.Main == "" {
+			d.kv("Started in", tilde(in.Cwd))
+		}
 		d.kv("Location", p.Kind.String())
 		d.kv("Role", in.Role)
 		if in.Exists {
@@ -249,8 +291,8 @@ func renderOverview(in *proc.Info, w int) string {
 	// COMMAND LINE
 	d.section("Command line")
 	cmd := p.Command
-	if len(cmd) > 1200 {
-		cmd = cmd[:1200] + "…"
+	if len(cmd) > 8000 {
+		cmd = cmd[:8000] + "…"
 	}
 	d.para(cmd)
 
@@ -283,6 +325,64 @@ func frameworkHint(path string) string {
 	return ""
 }
 
+func tilde(path string) string {
+	if home, err := os.UserHomeDir(); err == nil && home != "" {
+		if path == home {
+			return "~"
+		}
+		if strings.HasPrefix(path, home+"/") {
+			return "~" + path[len(home):]
+		}
+	}
+	return path
+}
+
+func joinNonEmpty(sep string, parts ...string) string {
+	var out []string
+	for _, p := range parts {
+		if p != "" {
+			out = append(out, p)
+		}
+	}
+	return strings.Join(out, sep)
+}
+
+func dashed(s string) string {
+	if s == "" {
+		return ""
+	}
+	return "by " + s
+}
+
+// describeClasspath summarises a long Java classpath: entry count, the
+// directories (usually the project's own source) and a few jar names.
+func describeClasspath(cp []string) string {
+	var dirs, jars []string
+	for _, e := range cp {
+		if strings.HasSuffix(e, ".jar") || strings.HasSuffix(e, ".zip") {
+			jars = append(jars, filepath.Base(e))
+		} else if e != "" {
+			dirs = append(dirs, tilde(e))
+		}
+	}
+	var parts []string
+	if len(dirs) > 0 {
+		parts = append(parts, "dirs: "+strings.Join(dirs[:min(len(dirs), 4)], ", "))
+		if len(dirs) > 4 {
+			parts[len(parts)-1] += fmt.Sprintf(" (+%d)", len(dirs)-4)
+		}
+	}
+	if len(jars) > 0 {
+		shown := jars[:min(len(jars), 4)]
+		s := "jars: " + strings.Join(shown, ", ")
+		if len(jars) > len(shown) {
+			s += fmt.Sprintf(" (+%d more)", len(jars)-len(shown))
+		}
+		parts = append(parts, s)
+	}
+	return fmt.Sprintf("%d entries. %s. Full list under Command line below.", len(cp), strings.Join(parts, "; "))
+}
+
 func versionSuffix(v string) string {
 	if v == "" {
 		return ""
@@ -307,9 +407,12 @@ func whyBullets(in *proc.Info) []string {
 	p := in.Proc
 	if len(in.Lineage) > 0 {
 		par := in.Lineage[len(in.Lineage)-1]
-		if par.PID == 1 {
+		switch {
+		case par.PID == 1 && in.Job == nil && in.JobLabel == "" && p.Kind != proc.KindSystem:
+			out = append(out, "Its parent process has exited, so macOS's launchd adopted it. That's normal for something started from a terminal that was later closed, or for programs that deliberately detach (servers, build daemons). Check 'Started in' for where it was launched from.")
+		case par.PID == 1:
 			out = append(out, "Launched directly by launchd, the usual route for background services, login items and apps you open from Finder or the Dock.")
-		} else {
+		default:
 			out = append(out, fmt.Sprintf("Started by %s, so something in that program (or whoever launched it) asked for it to run.", procLabel(par)))
 		}
 	}
@@ -351,6 +454,8 @@ func quitAdvice(in *proc.Info) string {
 	switch {
 	case in.Verdict.Level == proc.LevelSuspicious:
 		return "Don't just kill it: first note the path and who launched it, then quit it and remove the file and any launch job that restarts it (see 'How it starts')."
+	case in.Launch.Main != "" && in.KB == nil:
+		return fmt.Sprintf("Depends on what it runs (%s). If you started it from a terminal, press Ctrl-C there; otherwise check who owns it before killing.", in.Launch.Main)
 	case in.Job != nil && in.Job.KeepAlive:
 		return "launchd restarts it automatically, so quitting it won't stick. To stop it for good, uninstall the software or unload its launch job."
 	case p.Kind == proc.KindSystem:

@@ -31,6 +31,8 @@ type Info struct {
 	JobLabel string // label from launchctl when no plist matched
 	KB       *Entry
 	Handles  Handles
+	Launch   Launch
+	Cwd      string
 	Verdict  Verdict
 }
 
@@ -214,6 +216,19 @@ func Inspect(ctx context.Context, p Process, all []Process) *Info {
 	}
 	info.Handles = inspectHandles(ctx, p.PID, true)
 	wg.Wait()
+
+	info.Cwd = info.Handles.Cwd
+	info.Launch = ParseLaunch(readArgv(p.PID, p.Command))
+	if info.Launch.MainKind == "jar" {
+		jar := info.Launch.Main
+		if !filepath.IsAbs(jar) && info.Cwd != "" {
+			jar = filepath.Join(info.Cwd, jar)
+		}
+		info.Launch.JarInfo = ReadJarManifest(jar)
+		if mc := info.Launch.JarInfo["Start-Class"]; mc != "" {
+			info.Launch.Hints = append(info.Launch.Hints, "Spring Boot application; start class "+mc+".")
+		}
+	}
 
 	info.Verdict = Judge(info)
 	return info
