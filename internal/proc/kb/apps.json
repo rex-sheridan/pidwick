@@ -1,0 +1,243 @@
+{
+ "-zsh": {
+  "vendor": "Apple",
+  "summary": "A login shell. The leading dash is how Unix marks a shell started as the first process of a terminal session (zsh, macOS's default shell).",
+  "why": "A Terminal, iTerm2 or similar window (or an app that opens a terminal, such as an IDE or Claude Code) started it.",
+  "quit": "Closing that terminal tab ends it; anything running inside it stops too."
+ },
+ "pidwick": {
+  "vendor": "Pidwick",
+  "summary": "This app: the process viewer you are looking at.",
+  "why": "You started it.",
+  "quit": "Press q."
+ },
+ "1Password": {
+  "vendor": "AgileBits (1Password)",
+  "summary": "The 1Password password manager app.",
+  "why": "Installed from 1password.com or the App Store; usually set to launch at login.",
+  "quit": "Quit like any app. This locks your vault and stops autofill until you reopen it."
+ },
+ "1Password-BrowserSupport": {
+  "vendor": "AgileBits (1Password)",
+  "summary": "The bridge between 1Password's browser extension and the 1Password desktop app. Chrome, Firefox, Safari and others talk to it to unlock and autofill.",
+  "why": "Started by the browser extension (native messaging) when you use 1Password in a browser.",
+  "quit": "Safe: it ends when the browser closes or when it is idle; the extension restarts it."
+ },
+ "1Password-Crash-Handler": {
+  "vendor": "AgileBits (1Password)",
+  "summary": "The crash reporter for 1Password. It only does work if 1Password crashes.",
+  "why": "Launched together with 1Password.",
+  "quit": "Safe, but it quits with 1Password anyway."
+ },
+ "2BUA8C4S2C.com.1password.browser-helper": {
+  "vendor": "AgileBits (1Password)",
+  "summary": "The 1Password Safari-extension helper. The leading code is 1Password's Apple Team ID (2BUA8C4S2C).",
+  "why": "Started by the 1Password for Safari extension.",
+  "quit": "Safe; it restarts when Safari needs it."
+ },
+ "ChatGPT for Chrome": {
+  "vendor": "OpenAI",
+  "summary": "A native-messaging host from OpenAI's Codex plugin. It connects the Codex/ChatGPT Chrome extension with the Codex app on your Mac so Codex can see and drive Chrome tabs.",
+  "why": "Installed with the Codex Chrome plugin (look in ~/.codex/plugins). Chrome starts it when the extension connects.",
+  "quit": "Safe; disconnecting it just stops Codex's browser control until Chrome starts it again."
+ },
+ "chrome-native-host": {
+  "vendor": "Anthropic",
+  "summary": "The native-messaging host that connects the Claude in Chrome browser extension with the Claude desktop app.",
+  "why": "Installed with Claude.app. Chrome launches it when the Claude extension is active.",
+  "quit": "Safe; the extension relaunches it when needed."
+ },
+ "chrome_crashpad_handler": {
+  "vendor": "Google (Chromium)",
+  "summary": "Chromium's crash reporter. Chrome and Chromium-based apps (Electron apps, Edge, Brave) launch one to collect crash dumps.",
+  "why": "Starts with the app that uses Chromium.",
+  "quit": "Ends with its app. Safe to ignore."
+ },
+ "Google Chrome": {
+  "vendor": "Google",
+  "summary": "The Chrome web browser's main (browser) process.",
+  "why": "You or an extension/app opened Chrome.",
+  "quit": "Quit like any app. Its many 'Helper' processes close with it."
+ },
+ "Code": {
+  "vendor": "Microsoft",
+  "summary": "The main process of Visual Studio Code (or a similar Electron editor).",
+  "why": "You opened VS Code.",
+  "quit": "Quit like any app (save your files first). Its Helper, extension host and language-server child processes close with it."
+ },
+ "Lunar": {
+  "vendor": "Alin Panaitiu",
+  "summary": "Lunar: an app that controls the brightness, volume and inputs of external displays (using DDC) and keeps them in sync with the built-in screen.",
+  "why": "Installed by you; usually runs at login in the menu bar.",
+  "quit": "Quit from its menu-bar item. Your displays keep their last brightness but stop auto-adjusting."
+ },
+ "Dropbox": {
+  "vendor": "Dropbox, Inc.",
+  "summary": "The Dropbox desktop app. It syncs your Dropbox folder and shows a menu-bar item.",
+  "why": "Installed by you; set to open at login.",
+  "quit": "Quit from its menu. Syncing stops until you reopen it."
+ },
+ "DropboxFileProvider": {
+  "vendor": "Dropbox, Inc.",
+  "summary": "Dropbox's File Provider extension. It is how Dropbox files appear in Finder's sidebar as an online-only/synced folder.",
+  "why": "Part of Dropbox; loaded by macOS's fileproviderd.",
+  "quit": "Leave it; macOS restarts it. Quit Dropbox to stop it."
+ },
+ "DropboxFileProviderCH": {
+  "vendor": "Dropbox, Inc.",
+  "summary": "A helper of Dropbox's File Provider extension that handles content-heavy work such as downloads.",
+  "why": "Part of Dropbox.",
+  "quit": "Leave it; quit Dropbox to stop it.",
+  "inferred": true
+ },
+ "ShipIt": {
+  "vendor": "Squirrel / Electron apps",
+  "summary": "Squirrel.Mac's updater ('ShipIt'). Many Electron apps (Slack, Discord, Notion, Atom, GitHub Desktop) use it to download and install their own updates.",
+  "why": "Runs after an app such as Slack finds an update or at its next restart.",
+  "quit": "Safe; if an update was mid-install, restart the app to retry."
+ },
+ "Notion": {
+  "vendor": "Notion Labs",
+  "summary": "The Notion app (an Electron app).",
+  "why": "You opened Notion; many Notion helpers appear alongside it.",
+  "quit": "Quit like any app."
+ },
+ "Slack": {
+  "vendor": "Slack Technologies (Salesforce)",
+  "summary": "The Slack desktop app (an Electron app).",
+  "why": "You opened Slack; usually launched at login.",
+  "quit": "Quit like any app. Its Helper processes close with it."
+ },
+ "iTerm2": {
+  "vendor": "George Nachman (iTerm2)",
+  "summary": "The iTerm2 terminal emulator.",
+  "why": "You opened iTerm2.",
+  "quit": "Quit like any app; running sessions will end unless you use tmux/session restoration."
+ },
+ "pidinfo": {
+  "vendor": "George Nachman (iTerm2)",
+  "summary": "An iTerm2 helper (XPC service) that looks up information about running processes, such as which job is in the foreground, for the status bar and Triggers.",
+  "why": "Bundled inside iTerm2; started by iTerm2.",
+  "quit": "Safe; iTerm2 restarts it."
+ },
+ "claude": {
+  "vendor": "Anthropic",
+  "summary": "Claude Code, Anthropic's command-line AI coding agent. It reads your project, edits files and runs commands on your behalf.",
+  "why": "You (or an IDE integration) ran `claude` in a terminal.",
+  "quit": "Press Ctrl-C twice in its terminal, or close it. Stopping it halts any work in progress."
+ },
+ "codex": {
+  "vendor": "OpenAI",
+  "summary": "OpenAI Codex: a coding agent. This process is Codex's local app-server that the Codex app and its extensions talk to.",
+  "why": "Installed with the Codex app/CLI (see ~/.codex).",
+  "quit": "Quitting the Codex app ends it. Killing it stops any running Codex tasks."
+ },
+ "opencode": {
+  "vendor": "opencode (SST)",
+  "summary": "opencode: an open-source AI coding agent for the terminal.",
+  "why": "You ran `opencode` (possibly installed with Homebrew).",
+  "quit": "Close the terminal session or press Ctrl-C."
+ },
+ "copilot-runtime": {
+  "vendor": "GitHub (Microsoft)",
+  "summary": "The runtime behind GitHub Copilot's agent features inside VS Code.",
+  "why": "Launched by the GitHub Copilot extension in VS Code.",
+  "quit": "Safe; VS Code restarts it when you use Copilot."
+ },
+ "clojure-lsp": {
+  "vendor": "Clojure LSP project",
+  "summary": "A Clojure language server. Editors use it for completion, navigation and linting.",
+  "why": "Started by the Calva extension (or another Clojure editor plug-in).",
+  "quit": "Safe; the editor restarts it."
+ },
+ "cloudflared": {
+  "vendor": "Cloudflare",
+  "summary": "Cloudflare's tunnel daemon. It creates an outbound encrypted tunnel so a local service can be reached through Cloudflare without opening a port.",
+  "why": "You (or a Homebrew service) ran `cloudflared`, often for a Cloudflare Tunnel.",
+  "quit": "Stopping it closes the tunnel. Check what it exposes before stopping or leaving it on."
+ },
+ "java": {
+  "vendor": "Oracle / OpenJDK vendors",
+  "summary": "A Java Virtual Machine running a Java (or Clojure/Kotlin/Scala) program. The arguments show which program.",
+  "why": "A Java application, build tool or language server was started.",
+  "quit": "Depends on what it runs; see the command line before killing it."
+ },
+ "mosquitto": {
+  "vendor": "Eclipse Foundation",
+  "summary": "Eclipse Mosquitto: an MQTT message broker used by smart-home and IoT systems. It listens for network connections.",
+  "why": "Installed with Homebrew and usually started as a service.",
+  "quit": "Stopping it disconnects devices that publish to it (Home Assistant sensors, etc.). Check if you rely on it."
+ },
+ "gitstatusd-darwin-arm64": {
+  "vendor": "romkatv (Powerlevel10k)",
+  "summary": "gitstatus: a fast git status daemon used by the Powerlevel10k zsh prompt to show branch and change info instantly.",
+  "why": "Started by your zsh theme (Powerlevel10k) for each shell.",
+  "quit": "Safe; it exits when the shell does."
+ },
+ "go": {
+  "vendor": "Go project (Google)",
+  "summary": "The Go toolchain (go build, go run, go test…).",
+  "why": "You or a tool ran a Go command.",
+  "quit": "Safe; it ends the running build/command."
+ },
+ "proc.test": {
+  "vendor": "Go project (Google)",
+  "summary": "A compiled Go test binary (named after the package under test) started by `go test`.",
+  "why": "You or a tool ran `go test`.",
+  "quit": "Safe; it ends the test run."
+ },
+ "ps": {
+  "vendor": "Apple",
+  "summary": "The `ps` command listing processes. Pidwick itself runs it to refresh its list.",
+  "why": "Pidwick, a script, or you ran it.",
+  "quit": "Ends within a second."
+ },
+ "caffeinate": {
+  "vendor": "Apple",
+  "summary": "Keeps the Mac awake (stops sleep) while it runs.",
+  "why": "You or a program ran `caffeinate`, for example to stop sleep during a long job.",
+  "quit": "Safe; stopping it lets the Mac sleep again."
+ },
+ "ssh-agent": {
+  "vendor": "Apple",
+  "summary": "Holds your decrypted SSH keys in memory so you don't retype passphrases.",
+  "why": "Started by macOS at login (or by your shell).",
+  "quit": "Safe; you will be asked for key passphrases again."
+ },
+ "RTProtectionDaemon": {
+  "vendor": "Malwarebytes",
+  "summary": "Malwarebytes' real-time protection daemon. It scans files and processes for malware as they are used. Reports exist of it using a lot of CPU.",
+  "why": "Runs if Malwarebytes for Mac is installed and protection is on.",
+  "quit": "Quit Malwarebytes protection from its app. Force-killing it just makes it restart."
+ },
+ "mbuseragent": {
+  "vendor": "Malwarebytes",
+  "summary": "Malwarebytes' per-user agent: shows its notifications and menu-bar item.",
+  "why": "Part of Malwarebytes for Mac.",
+  "quit": "Quit Malwarebytes to stop it."
+ },
+ "SettingsDaemon": {
+  "vendor": "Malwarebytes",
+  "summary": "Malwarebytes' settings daemon: keeps its configuration, subscription status and policies.",
+  "why": "Part of Malwarebytes for Mac.",
+  "quit": "Quit Malwarebytes to stop it."
+ },
+ "FrontendAgent": {
+  "vendor": "Malwarebytes",
+  "summary": "Malwarebytes' agent that connects its background engine with the user interface.",
+  "why": "Part of Malwarebytes for Mac.",
+  "quit": "Quit Malwarebytes to stop it."
+ },
+ "com.malwarebytes.mbam.engine.sys.ext": {
+  "vendor": "Malwarebytes",
+  "summary": "Malwarebytes' system extension (Endpoint Security). It lets Malwarebytes watch process and file activity system-wide.",
+  "why": "Approved in System Settings > Privacy & Security when you installed Malwarebytes.",
+  "quit": "Don't kill; remove it through Malwarebytes' uninstaller."
+ },
+ "com.microsoft.teams2.agent": {
+  "vendor": "Microsoft",
+  "summary": "A login-item agent that belongs to the new Microsoft Teams app. It keeps notifications and presence running.",
+  "why": "Installed with Microsoft Teams.",
+  "quit": "Quit Teams or turn off 'Open at login' in its settings."
+ }
+}

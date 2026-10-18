@@ -126,7 +126,7 @@ func Judge(in *Info) Verdict {
 	}
 
 	// impersonation: wears an Apple name but isn't Apple's
-	if IsKnownApple(p.Name) && !apple && p.Kind != KindSystem {
+	if IsKnownApple(p.Name) && !apple && !trusted && p.Kind != KindSystem && p.Kind != KindBrew {
 		add(MarkBad, "Its name matches a well-known Apple process (\""+p.Name+"\") but it is not Apple-signed and does not live in a macOS system folder. Impersonating system process names is a common malware trick.")
 	}
 	if apple && p.Kind != KindSystem && p.Kind != KindApp {

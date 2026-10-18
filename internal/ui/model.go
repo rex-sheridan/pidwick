@@ -40,6 +40,14 @@ const (
 	tabCount
 )
 
+// Screen layout (rows/cols) used to map mouse coordinates.
+const (
+	listTop   = 3 // first process row
+	detailTop = 5 // first row of the detail viewport
+	tabRow    = 3
+	filterRow = 1
+)
+
 type (
 	procsMsg    struct{ procs []proc.Process }
 	tickMsg     struct{}
@@ -77,6 +85,18 @@ type Model struct {
 	flash    string
 	flashSeq int
 	err      error
+
+	lines    []string // detail content, raw ANSI, one entry per row
+	plain    []string // same, ANSI-stripped and right-trimmed (for copying)
+	sel      selection
+	dragging bool
+	lastClk  struct {
+		at    time.Time
+		x, y  int
+		count int
+	}
+	nativeMouse bool // mouse released so the terminal can select text itself
+	kill        *killPrompt
 }
 
 func New() Model {
@@ -200,17 +220,29 @@ func (m *Model) onSelect() tea.Cmd {
 	return tea.Tick(150*time.Millisecond, func(time.Time) tea.Msg { return debounceMsg{seq} })
 }
 
+func (m *Model) setContent(s string) {
+	if strings.Join(m.lines, "\n") != s {
+		m.sel = selection{}
+	}
+	m.detail.SetContent(s)
+	m.lines = strings.Split(s, "\n")
+	m.plain = make([]string, len(m.lines))
+	for i, l := range m.lines {
+		m.plain[i] = strings.TrimRight(ansi.Strip(l), " ")
+	}
+}
+
 func (m *Model) showCurrent() {
 	p, ok := m.selected()
 	if !ok {
-		m.detail.SetContent("")
+		m.setContent("")
 		return
 	}
 	if c, ok := m.cache[p.Key()]; ok {
-		m.detail.SetContent(m.renderTab(c.info))
+		m.setContent(m.renderTab(c.info))
 		return
 	}
-	m.detail.SetContent(sDim.Render("Inspecting " + p.Name + "…"))
+	m.setContent(sDim.Render(ansi.Truncate("Inspecting "+p.Name+"…", max(m.detail.Width, 10), "…")))
 }
 
 func (m Model) renderTab(in *proc.Info) string {
@@ -288,21 +320,15 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 		return m, nil
 
-	case tea.MouseMsg:
-		if msg.Action == tea.MouseActionPress || msg.Action == tea.MouseActionMotion {
-			switch msg.Button {
-			case tea.MouseButtonWheelUp, tea.MouseButtonWheelDown:
-				dir := 1
-				if msg.Button == tea.MouseButtonWheelUp {
-					dir = -1
-				}
-				if msg.X < m.leftWidth() {
-					return m.move(dir * 3)
-				}
-				m.detail.SetYOffset(m.detail.YOffset + dir*3)
-			}
+	case killedMsg:
+		cmds := []tea.Cmd{m.setFlash(msg.text)}
+		if msg.err == nil {
+			cmds = append(cmds, tea.Tick(700*time.Millisecond, func(time.Time) tea.Msg { return tickMsg{} }))
 		}
-		return m, nil
+		return m, tea.Batch(cmds...)
+
+	case tea.MouseMsg:
+		return m.handleMouse(msg)
 
 	case tea.KeyMsg:
 		return m.handleKey(msg)
@@ -328,6 +354,9 @@ func (m *Model) setFlash(s string) tea.Cmd {
 }
 
 func (m Model) handleKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
+	if m.kill != nil {
+		return m.handleKillKey(msg)
+	}
 	if m.filtering {
 		switch msg.String() {
 		case "enter":
@@ -404,6 +433,24 @@ func (m Model) handleKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			m.showCurrent()
 			return m, inspect(p, m.all)
 		}
+	case "x", "delete":
+		if p, ok := m.selected(); ok {
+			var in *proc.Info
+			if c, ok := m.cache[p.Key()]; ok {
+				in = c.info
+			}
+			m.kill = newKillPrompt(p, m.all, in)
+		}
+	case "m":
+		m.nativeMouse = !m.nativeMouse
+		if m.nativeMouse {
+			return m, tea.Batch(tea.DisableMouse, m.setFlash("Mouse released: select text with your terminal. Press m to restore clicking"))
+		}
+		return m, tea.Batch(tea.EnableMouseCellMotion, m.setFlash("Mouse capture on"))
+	case "y":
+		if txt := strings.TrimRight(strings.Join(m.plain, "\n"), "\n "); txt != "" {
+			return m, m.copyText(txt, "Copied this view")
+		}
 	case "f":
 		if p, ok := m.selected(); ok && p.Path != "" {
 			_ = exec.Command("open", "-R", p.Path).Start()
@@ -411,11 +458,7 @@ func (m Model) handleKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		}
 	case "c":
 		if p, ok := m.selected(); ok && p.Path != "" {
-			cmd := exec.Command("pbcopy")
-			cmd.Stdin = strings.NewReader(p.Path)
-			if cmd.Run() == nil {
-				return m, m.setFlash("Copied path to clipboard")
-			}
+			return m, m.copyText(p.Path, "Copied path to clipboard")
 		}
 	case "w":
 		if p, ok := m.selected(); ok {
@@ -451,6 +494,9 @@ func (m Model) View() string {
 	if m.hideApple {
 		header += sWarn.Render("  · hiding Apple/system")
 	}
+	if m.nativeMouse {
+		header += sWarn.Render("  · native select mode")
+	}
 	if m.flash != "" {
 		header += "  " + sAccent.Render(m.flash)
 	}
@@ -460,12 +506,42 @@ func (m Model) View() string {
 	sep := sDim.Render(strings.Repeat("│\n", m.height-3) + "│")
 	body := lipgloss.JoinHorizontal(lipgloss.Top, left, " "+sep+" ", right)
 
-	return header + "\n" + body + "\n" + m.footer()
+	out := header + "\n" + body + "\n" + m.footer()
+	if m.kill != nil {
+		out = overlay(out, m.kill.view(m.width), m.width, m.height)
+	}
+	return out
 }
 
 func (m Model) footer() string {
-	keys := "↑↓ select · tab/1-3 view · J/K scroll · / filter · s sort · a hide Apple · r rescan · f reveal · c copy · w web · q quit"
-	return sDim.Render(ansi.Truncate(keys, m.width, "…"))
+	if m.kill != nil {
+		return sBad.Render("t terminate · k force kill · esc cancel")
+	}
+	// Hints are dropped right-to-left in this priority order when space is short.
+	hints := []struct{ key, text string }{
+		{"↑↓/click", "select"}, {"tab", "view"}, {"drag", "copy"}, {"/", "filter"}, {"x", "kill"},
+		{"s", "sort"}, {"a", "hide Apple"}, {"c", "copy path"}, {"f", "reveal"}, {"w", "web"}, {"m", "native select"}, {"q", "quit"},
+	}
+	drop := []string{"native select", "web", "reveal", "copy path", "hide Apple", "sort"}
+	render := func(hs []struct{ key, text string }) string {
+		parts := make([]string, len(hs))
+		for i, h := range hs {
+			parts[i] = sBold.Render(h.key) + sDim.Render(" "+h.text)
+		}
+		return strings.Join(parts, sDim.Render(" · "))
+	}
+	for _, d := range drop {
+		if ansi.StringWidth(render(hints)) <= m.width {
+			break
+		}
+		for i, h := range hints {
+			if h.text == d {
+				hints = append(hints[:i], hints[i+1:]...)
+				break
+			}
+		}
+	}
+	return ansi.Truncate(render(hints), m.width, "…")
 }
 
 func (m Model) renderList(w int) string {
@@ -520,5 +596,23 @@ func (m Model) renderDetail(w int) string {
 		title = sBold.Render(p.Name) + "  " + sDim.Render("inspecting…")
 	}
 	head := ansi.Truncate(title, w, "…") + "\n" + ansi.Truncate(meta, w, "…") + "\n" + tabBar(m.tab, w) + "\n" + sDim.Render(strings.Repeat("─", w))
-	return lipgloss.NewStyle().Width(w).MaxWidth(w).Render(head + "\n" + m.detail.View())
+	return lipgloss.NewStyle().Width(w).MaxWidth(w).Render(head + "\n" + m.detailRows())
+}
+
+// detailRows renders the visible slice of the detail content, applying the
+// text-selection highlight.
+func (m Model) detailRows() string {
+	rows := make([]string, m.detail.Height)
+	for r := range rows {
+		i := m.detail.YOffset + r
+		if i >= len(m.lines) {
+			continue
+		}
+		l := ansi.Truncate(m.lines[i], m.detail.Width, "")
+		if from, to, ok := m.sel.span(i, m.plain[i]); ok {
+			l = highlight(l, from, to)
+		}
+		rows[r] = l
+	}
+	return strings.Join(rows, "\n")
 }

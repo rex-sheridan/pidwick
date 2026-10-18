@@ -189,7 +189,7 @@ func Inspect(ctx context.Context, p Process, all []Process) *Info {
 		cur = par
 	}
 
-	if e, ok := Lookup(p.Name); ok {
+	if e, ok := LookupProcess(p); ok {
 		info.KB = &e
 	}
 

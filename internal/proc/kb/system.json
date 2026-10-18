@@ -1,0 +1,1847 @@
+{
+ "akd": {
+  "vendor": "Apple",
+  "summary": "AuthKit daemon. Handles Apple Account sign-in: it stores and refreshes the authentication tokens that iCloud, the App Store and other Apple services use.",
+  "why": "Runs whenever you're signed in with an Apple Account.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "appleaccountd": {
+  "vendor": "Apple",
+  "summary": "Apple Account daemon. Manages your Apple Account (iCloud) sign-in state and which services are enabled for it.",
+  "why": "Runs while you are signed in to iCloud.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "AKFollowUpExtension": {
+  "vendor": "Apple",
+  "summary": "Shows 'follow-up' items for your Apple Account, such as 'Account needs attention' or 'Verify your phone number', in System Settings.",
+  "why": "Runs when macOS checks whether your Apple Account has pending actions.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "followupd": {
+  "vendor": "Apple",
+  "summary": "CoreFollowUp daemon. Collects pending follow-up tasks (finish iCloud setup, update account details, repair Keychain) and raises the red badge in System Settings.",
+  "why": "Runs in the background for every signed-in user.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "AOSHeartbeat": {
+  "vendor": "Apple",
+  "summary": "Apple Online Services heartbeat. Periodically checks in so iCloud-related services know this Mac is still active on your account.",
+  "why": "Part of the iCloud account machinery.",
+  "quit": "Safe. It restarts on demand.",
+  "inferred": true
+ },
+ "cdpd": {
+  "vendor": "Apple",
+  "summary": "Cloud Data Protection daemon. Handles iCloud end-to-end encryption keys and account recovery (recovery contacts/keys, Advanced Data Protection).",
+  "why": "Runs while signed in to iCloud.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "TrustedPeersHelper": {
+  "vendor": "Apple",
+  "summary": "Maintains the 'circle of trust' of your Apple devices that can share iCloud Keychain and other end-to-end encrypted data.",
+  "why": "Runs while iCloud Keychain / Passwords sync is on.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "Keychain Circle Notification": {
+  "vendor": "Apple",
+  "summary": "Shows the approval prompts when a new device asks to join your iCloud Keychain circle.",
+  "why": "Appears briefly when you set up a new device with your Apple Account.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "keychainsharingmessagingd": {
+  "vendor": "Apple",
+  "summary": "Delivers messages used to share passwords and passkeys between you and family or contacts (Shared Passwords groups).",
+  "why": "Runs with Passwords/iCloud Keychain.",
+  "quit": "Safe. It restarts on demand.",
+  "inferred": true
+ },
+ "AppleCredentialManagerDaemon": {
+  "vendor": "Apple",
+  "summary": "Manages credentials you can move between apps and devices: passkeys, passwords, and credential import/export.",
+  "why": "Runs for Passwords / AutoFill.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "AuthenticationServicesAgent": {
+  "vendor": "Apple",
+  "summary": "Powers Sign in with Apple, passkeys and AutoFill credential prompts for apps and websites.",
+  "why": "Runs on demand when an app asks to sign you in.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "PasswordBreachAgent": {
+  "vendor": "Apple",
+  "summary": "Checks whether your saved passwords appear in known data breaches (Security Recommendations in the Passwords app). It does this privately without sending your passwords.",
+  "why": "Runs periodically if Passwords is in use.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "amsaccountsd": {
+  "vendor": "Apple",
+  "summary": "Apple Media Services accounts daemon: manages the sign-in used for the App Store, Music, TV, Books and Podcasts purchases.",
+  "why": "Runs for any app that uses your Apple media account.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "amsengagementd": {
+  "vendor": "Apple",
+  "summary": "Apple Media Services engagement daemon. Handles in-app and system messages from the App Store and Apple media services (promotional or account notices).",
+  "why": "Runs in the background for media services.",
+  "quit": "Safe. It restarts on demand.",
+  "inferred": true
+ },
+ "storekitagent": {
+  "vendor": "Apple",
+  "summary": "StoreKit agent. Handles in-app purchases and subscriptions on behalf of apps.",
+  "why": "Runs when an app uses the App Store for purchases or receipts.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "commerce": {
+  "vendor": "Apple",
+  "summary": "CommerceKit helper for the Mac App Store. Does the actual download, install and update work for App Store apps.",
+  "why": "Runs when the App Store installs or updates apps.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "fairplayd": {
+  "vendor": "Apple",
+  "summary": "FairPlay DRM daemon. Verifies licences for protected content such as App Store apps, Apple Music and TV purchases.",
+  "why": "Runs when protected Apple content is opened.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "familycircled": {
+  "vendor": "Apple",
+  "summary": "Family Sharing daemon. Syncs family membership, shared purchases and Screen Time/Ask to Buy approvals.",
+  "why": "Runs if you use Family Sharing.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "FamilyIntents": {
+  "vendor": "Apple",
+  "summary": "Siri and Shortcuts actions for Family Sharing.",
+  "why": "Runs on demand with Shortcuts/Siri.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "eligibilityd": {
+  "vendor": "Apple",
+  "summary": "Eligibility daemon. Decides which features are available on this device based on region, hardware and settings, for example whether Apple Intelligence can be used.",
+  "why": "Runs at startup and when the region or language changes.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "countryd": {
+  "vendor": "Apple",
+  "summary": "Determines your country/region from signals such as Wi-Fi and cell data so regional features and legal requirements can be applied.",
+  "why": "Always running in the background.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "tzd": {
+  "vendor": "Apple",
+  "summary": "Time-zone daemon. Works out the current time zone from your location and keeps time-zone rules up to date.",
+  "why": "Runs so the Mac can adjust the clock automatically when you travel.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "timed": {
+  "vendor": "Apple",
+  "summary": "Time sync daemon. Keeps the system clock accurate using network time servers (NTP).",
+  "why": "Always running; it replaced the older ntpd.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "clocksyncd": {
+  "vendor": "Apple",
+  "summary": "Keeps your Mac's clock synchronised with other devices and clocks (for example for AirPlay/HomePod audio sync).",
+  "why": "Runs in the background.",
+  "quit": "Safe. It restarts on demand.",
+  "inferred": true
+ },
+ "adid": {
+  "vendor": "Apple",
+  "summary": "Advertising identifier daemon. Manages the ad-tracking ID and the Apple advertising/privacy settings that go with it.",
+  "why": "Runs in the background.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "SubmitDiagInfo": {
+  "vendor": "Apple",
+  "summary": "Packages and sends diagnostic and usage data to Apple if you opted in under System Settings > Privacy & Security > Analytics & Improvements.",
+  "why": "Starts periodically (usually overnight). Turn off sharing to stop it.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "analyticsd": {
+  "vendor": "Apple",
+  "summary": "Analytics daemon. Collects anonymous diagnostics and usage metrics that go to Apple if you allowed it.",
+  "why": "Always running, though it only uploads data if you opted in.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "analyticsagent": {
+  "vendor": "Apple",
+  "summary": "Per-user analytics agent that feeds the analytics daemon with usage data.",
+  "why": "Runs while you are logged in.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "osanalyticshelper": {
+  "vendor": "Apple",
+  "summary": "Helper that writes OS analytics and crash/diagnostic logs.",
+  "why": "Runs briefly after crashes or at scheduled times.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "inputanalyticsd": {
+  "vendor": "Apple",
+  "summary": "Collects statistics about keyboard and input use (such as which keyboards and languages you use) for improvement of text input features.",
+  "why": "Runs in the background.",
+  "quit": "Safe. It restarts on demand.",
+  "inferred": true
+ },
+ "rtcreportingd": {
+  "vendor": "Apple",
+  "summary": "Real-Time Communication reporting. Sends call-quality metrics from FaceTime and similar calling to Apple.",
+  "why": "Runs during calls.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "cloudtelemetryd": {
+  "vendor": "Apple",
+  "summary": "Gathers telemetry for iCloud services.",
+  "why": "Runs in the background.",
+  "quit": "Safe. It restarts on demand.",
+  "inferred": true
+ },
+ "Siri": {
+  "vendor": "Apple",
+  "summary": "The Siri app process: speech and responses, 'Hey Siri', and the Siri window.",
+  "why": "Runs when Siri is enabled.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "Siri AI": {
+  "vendor": "Apple",
+  "summary": "The Siri / Apple Intelligence experience (conversational Siri and on-screen actions).",
+  "why": "Runs when Siri or Apple Intelligence is enabled.",
+  "quit": "Safe. It restarts on demand.",
+  "inferred": true
+ },
+ "SiriNCService": {
+  "vendor": "Apple",
+  "summary": "Siri notification-centre service. Shows Siri suggestions and results in Notification Center.",
+  "why": "Runs on demand with Siri.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "siriactionsd": {
+  "vendor": "Apple",
+  "summary": "Runs Siri actions and Shortcuts for you, including requests from apps via App Intents.",
+  "why": "Runs on demand.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "siriinferenced": {
+  "vendor": "Apple",
+  "summary": "Runs Siri's machine-learning models on your Mac for understanding requests.",
+  "why": "Runs on demand.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "generativeexperiencesd": {
+  "vendor": "Apple",
+  "summary": "Apple Intelligence daemon for generative features (Writing Tools, summaries, Image Playground). It coordinates the on-device models.",
+  "why": "Runs when Apple Intelligence features are used or prepared.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "GenerativeExperiencesSafetyInferenceProvider": {
+  "vendor": "Apple",
+  "summary": "Runs on-device safety checks on content produced by Apple Intelligence features.",
+  "why": "Runs alongside Apple Intelligence.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "TGOnDeviceInferenceProviderService": {
+  "vendor": "Apple",
+  "summary": "Runs Apple Intelligence language models on your Mac (on-device inference). Can use a lot of CPU, GPU and memory while generating.",
+  "why": "Starts when a feature that uses on-device text generation runs.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "modelmanagerd": {
+  "vendor": "Apple",
+  "summary": "Manages Apple Intelligence and machine-learning models on this Mac: downloading, loading and unloading them.",
+  "why": "Runs when apps need an on-device model.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "modelcatalogd": {
+  "vendor": "Apple",
+  "summary": "Keeps the catalogue of available Apple Intelligence / ML models and their versions.",
+  "why": "Runs periodically and when models are updated.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "mlhostd": {
+  "vendor": "Apple",
+  "summary": "Machine learning host. Runs ML inference for system features in a sandboxed helper.",
+  "why": "Runs on demand.",
+  "quit": "Safe. It restarts on demand.",
+  "inferred": true
+ },
+ "IntelligencePlatformComputeService": {
+  "vendor": "Apple",
+  "summary": "Compute service for the Apple Intelligence platform: runs personal-context tasks on-device.",
+  "why": "Runs on demand.",
+  "quit": "Safe. It restarts on demand.",
+  "inferred": true
+ },
+ "intelligencecontextd": {
+  "vendor": "Apple",
+  "summary": "Builds the personal context (from your apps and activity) that Apple Intelligence and Siri use. It stays on device.",
+  "why": "Runs in the background when Apple Intelligence is on.",
+  "quit": "Safe. It restarts on demand.",
+  "inferred": true
+ },
+ "privatecloudcomputed": {
+  "vendor": "Apple",
+  "summary": "Talks to Apple's Private Cloud Compute servers for Apple Intelligence requests too big to run locally.",
+  "why": "Runs when such a request is made.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "PCCAgentClientExtension": {
+  "vendor": "Apple",
+  "summary": "Client extension for Apple's Private Cloud Compute: sends requests securely to Apple servers.",
+  "why": "Runs on demand.",
+  "quit": "Safe. It restarts on demand.",
+  "inferred": true
+ },
+ "aned": {
+  "vendor": "Apple",
+  "summary": "Apple Neural Engine daemon. Schedules machine-learning work onto the Neural Engine chip.",
+  "why": "Runs when ML models are used.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "mediaanalysisd": {
+  "vendor": "Apple",
+  "summary": "Analyses photos and videos for Visual Look Up, Live Text, people and scenes. Can be busy right after importing photos.",
+  "why": "Runs in the background, mostly when idle.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "knowledge-agent": {
+  "vendor": "Apple",
+  "summary": "Siri knowledge agent. Maintains the on-device knowledge graph that Siri suggestions use.",
+  "why": "Runs while Siri/suggestions are on.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "proactived": {
+  "vendor": "Apple",
+  "summary": "Proactive suggestions daemon. Predicts what you may want next (apps, contacts, events) and surfaces suggestions.",
+  "why": "Runs in the background.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "ospredictiond": {
+  "vendor": "Apple",
+  "summary": "OS prediction daemon. Predicts which apps you will launch next so macOS can prepare them.",
+  "why": "Runs in the background.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "duetexpertd": {
+  "vendor": "Apple",
+  "summary": "Part of the Duet intelligence system that learns usage patterns to schedule background work and suggestions.",
+  "why": "Runs in the background.",
+  "quit": "Safe. It restarts on demand.",
+  "inferred": true
+ },
+ "contextstored": {
+  "vendor": "Apple",
+  "summary": "Stores context signals (location, activity, device state) that on-device intelligence features use.",
+  "why": "Runs in the background.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "ContextStoreAgent": {
+  "vendor": "Apple",
+  "summary": "Per-user agent for the context store used by suggestions and Siri.",
+  "why": "Runs while you are logged in.",
+  "quit": "Safe. It restarts on demand.",
+  "inferred": true
+ },
+ "ContextService": {
+  "vendor": "Apple",
+  "summary": "Provides device context information to system features and apps.",
+  "why": "Runs on demand.",
+  "quit": "Safe. It restarts on demand.",
+  "inferred": true
+ },
+ "BiomeAgent": {
+  "vendor": "Apple",
+  "summary": "Biome stream agent. Records on-device streams of app, device and usage events that power suggestions. Data stays on the Mac.",
+  "why": "Runs while you are logged in.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "peopled": {
+  "vendor": "Apple",
+  "summary": "People suggestions daemon. Works out the contacts you interact with most for Share Sheet and Siri suggestions.",
+  "why": "Runs in the background.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "translationd": {
+  "vendor": "Apple",
+  "summary": "Translation daemon. Powers system Translate features, running translation models on-device.",
+  "why": "Runs when text is translated.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "languageassetd": {
+  "vendor": "Apple",
+  "summary": "Downloads and manages language assets (dictionaries, speech and translation models).",
+  "why": "Runs when you add languages or keyboards.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "corespeechd": {
+  "vendor": "Apple",
+  "summary": "Core Speech daemon. Detects 'Hey Siri' and handles on-device speech recognition and dictation.",
+  "why": "Always running when Siri or Dictation is on.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "corespeechd_system": {
+  "vendor": "Apple",
+  "summary": "System-wide Core Speech daemon that runs the always-listening 'Hey Siri' trigger detector.",
+  "why": "Runs when 'Listen for Siri' is enabled.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "spotlightknowledged.updater": {
+  "vendor": "Apple",
+  "summary": "Spotlight Knowledge updater. Maintains the data behind Spotlight suggestions (knowledge cards, app and contact suggestions).",
+  "why": "Runs periodically.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "spotlightknowledged.importer": {
+  "vendor": "Apple",
+  "summary": "Spotlight Knowledge importer. Imports content so that Spotlight can show suggestions about it.",
+  "why": "Runs in the background.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "hybridsearchd": {
+  "vendor": "Apple",
+  "summary": "Hybrid search daemon. Combines lexical search with semantic (meaning-based) search for Spotlight and apps.",
+  "why": "Runs on demand while indexing/searching.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "mdbulkimport": {
+  "vendor": "Apple",
+  "summary": "Spotlight bulk import helper. Quickly indexes lots of files at once, for example after restoring or copying a big folder.",
+  "why": "Runs while Spotlight catches up.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "mdwrite": {
+  "vendor": "Apple",
+  "summary": "Spotlight index writer. Commits metadata changes to the Spotlight index.",
+  "why": "Runs while Spotlight is indexing.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "contentlinkingd": {
+  "vendor": "Apple",
+  "summary": "Content linking daemon. Finds and links related items across apps (mentions, shared content).",
+  "why": "Runs in the background.",
+  "quit": "Safe. It restarts on demand.",
+  "inferred": true
+ },
+ "CategoriesService": {
+  "vendor": "Apple",
+  "summary": "Categories service used by Spotlight and system search to group results into categories.",
+  "why": "Runs on demand.",
+  "quit": "Safe. It restarts on demand.",
+  "inferred": true
+ },
+ "com.apple.CodeSigningHelper": {
+  "vendor": "Apple",
+  "summary": "Helper that evaluates code signatures for system services.",
+  "why": "Runs on demand while apps are launched or checked.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "fileproviderd": {
+  "vendor": "Apple",
+  "summary": "File Provider daemon. Powers cloud storage in Finder (iCloud Drive, Dropbox, OneDrive, Google Drive) by managing each provider's placeholder and synced files.",
+  "why": "Runs whenever a cloud-storage app uses the File Provider integration.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "com.apple.CloudDocs.iCloudDriveFileProvider": {
+  "vendor": "Apple",
+  "summary": "The iCloud Drive file provider extension, which shows iCloud Drive in Finder.",
+  "why": "Runs with iCloud Drive.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "fpassetmanagerd": {
+  "vendor": "Apple",
+  "summary": "File Provider asset manager. Handles thumbnails and assets for files in cloud-storage folders.",
+  "why": "Runs with File Provider.",
+  "quit": "Safe. It restarts on demand.",
+  "inferred": true
+ },
+ "FPCKService": {
+  "vendor": "Apple",
+  "summary": "File Provider CloudKit service. Syncs file-provider metadata with iCloud.",
+  "why": "Runs with iCloud Drive.",
+  "quit": "Safe. It restarts on demand.",
+  "inferred": true
+ },
+ "CloudDocsStorageManagement": {
+  "vendor": "Apple",
+  "summary": "Reports iCloud Drive usage to System Settings > Storage.",
+  "why": "Runs when you open Storage.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "filecoordinationd": {
+  "vendor": "Apple",
+  "summary": "File coordination daemon. Prevents apps from clobbering each other when they read/write the same file (NSFileCoordinator).",
+  "why": "Always running.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "revisiond": {
+  "vendor": "Apple",
+  "summary": "Document versions daemon. Stores the automatic versions that let you 'Revert To' and browse older versions of documents.",
+  "why": "Runs when versioned documents are saved.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "sharedfilelistd": {
+  "vendor": "Apple",
+  "summary": "Maintains the shared file lists: Finder sidebar items, Recent Items, and login items lists.",
+  "why": "Always running.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "storagekitd": {
+  "vendor": "Apple",
+  "summary": "StorageKit daemon. Manages volumes and APFS containers for Disk Utility and storage features.",
+  "why": "Runs on demand.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "apfsd": {
+  "vendor": "Apple",
+  "summary": "APFS user-space daemon. Handles APFS tasks that can't run in the kernel, such as encrypted volume management and snapshots.",
+  "why": "Always running.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "deleted": {
+  "vendor": "Apple",
+  "summary": "Purgeable-space cleaner. Frees disk space on demand by deleting caches and other purgeable data when storage runs low. Not related to the word 'deleted'.",
+  "why": "Runs when free space is low, which can cause short CPU/disk bursts.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "autofsd": {
+  "vendor": "Apple",
+  "summary": "Automounter control daemon: lets macOS mount network home folders and shares on demand.",
+  "why": "Starts when automounts are configured.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "automountd": {
+  "vendor": "Apple",
+  "summary": "Automounter daemon: mounts network file systems when you first use them.",
+  "why": "Runs on demand.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "ContainerMetadataExtractor": {
+  "vendor": "Apple",
+  "summary": "Reads metadata from app containers (the sandbox folders where apps keep their data) for system features.",
+  "why": "Runs on demand.",
+  "quit": "Safe. It restarts on demand.",
+  "inferred": true
+ },
+ "containermanagerd": {
+  "vendor": "Apple",
+  "summary": "Container manager. Creates and manages app sandbox containers and their permissions.",
+  "why": "Always running.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "containermanagerd_system": {
+  "vendor": "Apple",
+  "summary": "System-wide container manager for sandboxed system apps and daemons.",
+  "why": "Always running.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "ScopedBookmarkAgent": {
+  "vendor": "Apple",
+  "summary": "Stores 'security-scoped bookmarks' so sandboxed apps keep access to files and folders you gave them access to.",
+  "why": "Runs while you are logged in.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "DiskUnmountWatcher": {
+  "vendor": "Apple",
+  "summary": "Watches for disks that were disconnected without being ejected and posts the warning.",
+  "why": "Runs while you are logged in.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "KernelEventAgent": {
+  "vendor": "Apple",
+  "summary": "Receives events from the kernel such as drives mounting or the need to show a dialog, and acts on them for the user.",
+  "why": "Always running.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "migrationhelper": {
+  "vendor": "Apple",
+  "summary": "Helper for moving data and settings during macOS upgrades and migration.",
+  "why": "Runs after OS updates or Migration Assistant.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "systemmigrationd": {
+  "vendor": "Apple",
+  "summary": "System migration daemon. Applies data and settings migrations during/after macOS updates.",
+  "why": "Runs after updates.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "usernoted": {
+  "vendor": "Apple",
+  "summary": "User notification daemon. Collects and delivers notifications from apps.",
+  "why": "Always running.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "usernotificationsd": {
+  "vendor": "Apple",
+  "summary": "User notifications service that applies Focus filtering and delivery rules.",
+  "why": "Always running.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "UserNotificationCenter": {
+  "vendor": "Apple",
+  "summary": "Displays alert dialogs on behalf of background daemons (for example 'App wants to access…', crash and update alerts).",
+  "why": "Runs briefly whenever a system alert is shown.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "donotdisturbd": {
+  "vendor": "Apple",
+  "summary": "Focus / Do Not Disturb daemon. Applies your Focus modes and schedules.",
+  "why": "Always running.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "CoreServicesUIAgent": {
+  "vendor": "Apple",
+  "summary": "Shows the system dialogs of Launch Services and Gatekeeper, such as 'App downloaded from the internet. Open?'.",
+  "why": "Runs on demand.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "ViewBridgeAuxiliary": {
+  "vendor": "Apple",
+  "summary": "Renders secure remote views for other apps, such as Open/Save panels, the emoji viewer and Share sheets, in a separate process for sandboxing.",
+  "why": "Spawned whenever an app shows one of those system panels.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "ShareSheetUI": {
+  "vendor": "Apple",
+  "summary": "The Share sheet user interface.",
+  "why": "Runs when you click Share.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "ShortcutsViewService": {
+  "vendor": "Apple",
+  "summary": "Displays UI for the Shortcuts app and Siri/Shortcuts actions.",
+  "why": "Runs on demand.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "CursorUIViewService": {
+  "vendor": "Apple",
+  "summary": "Draws system text-cursor UI (for example the caret and Dictation/inline prediction indicators) for text input.",
+  "why": "Runs on demand with the text input system.",
+  "quit": "Safe. It restarts on demand.",
+  "inferred": true
+ },
+ "TextInputMenuAgent": {
+  "vendor": "Apple",
+  "summary": "Menu bar input menu: the keyboard layout / input source switcher.",
+  "why": "Runs while you are logged in.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "PAH_Extension": {
+  "vendor": "Apple",
+  "summary": "Press-and-Hold. Shows the accent popup when you hold down a letter key (a becomes à, á, â…).",
+  "why": "Runs when you hold a key.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "imklaunchagent": {
+  "vendor": "Apple",
+  "summary": "Input Method Kit launcher. Starts third-party and system input methods such as Chinese, Japanese and emoji input.",
+  "why": "Runs while input methods are in use.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "keyboardservicesd": {
+  "vendor": "Apple",
+  "summary": "Keyboard services daemon: autocorrect, text replacement and predictive text.",
+  "why": "Runs while typing.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "pbs": {
+  "vendor": "Apple",
+  "summary": "Pasteboard server. Provides the Services menu and text services for apps.",
+  "why": "Runs while you are logged in.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "TextThumbnailExtension": {
+  "vendor": "Apple",
+  "summary": "Generates Quick Look thumbnails for text documents.",
+  "why": "Runs when Finder shows previews.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "com.apple.quicklook.ThumbnailsAgent": {
+  "vendor": "Apple",
+  "summary": "Generates Quick Look thumbnails and previews for files shown in Finder.",
+  "why": "Runs when you browse folders with previews on.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "MenuBarAgent": {
+  "vendor": "Apple",
+  "summary": "Manages the menu bar items and the 'Allow in the Menu Bar' settings.",
+  "why": "Runs while you are logged in.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "DockHelper": {
+  "vendor": "Apple",
+  "summary": "Helper for the Dock.",
+  "why": "Runs with Dock.",
+  "quit": "Safe. It restarts on demand.",
+  "inferred": true
+ },
+ "DockControls": {
+  "vendor": "Apple",
+  "summary": "The Dock's Control Center / settings controls extension.",
+  "why": "Runs on demand.",
+  "quit": "Safe. It restarts on demand.",
+  "inferred": true
+ },
+ "DisplayControls": {
+  "vendor": "Apple",
+  "summary": "Control Center extension for display brightness and Night Shift controls.",
+  "why": "Runs on demand.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "ScreenshotControls": {
+  "vendor": "Apple",
+  "summary": "Extension for the Screenshot toolbar controls (Shift-Command-5).",
+  "why": "Runs when you take screenshots.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "com.apple.dock.extra": {
+  "vendor": "Apple",
+  "summary": "Auxiliary Dock process that hosts Dock extras such as tile previews and widgets.",
+  "why": "Runs with Dock.",
+  "quit": "Safe. It restarts on demand.",
+  "inferred": true
+ },
+ "com.apple.dock.external.extra.arm64": {
+  "vendor": "Apple",
+  "summary": "Auxiliary Dock process that hosts external or legacy Dock extensions for Apple silicon.",
+  "why": "Runs with Dock.",
+  "quit": "Safe. It restarts on demand.",
+  "inferred": true
+ },
+ "WindowManager": {
+  "vendor": "Apple",
+  "summary": "Stage Manager and window tiling. Manages how app windows are grouped and arranged.",
+  "why": "Runs while you are logged in.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "UniversalControl": {
+  "vendor": "Apple",
+  "summary": "Universal Control: lets one keyboard and mouse control Macs and iPads nearby.",
+  "why": "Runs while you are logged in.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "AirDrop": {
+  "vendor": "Apple",
+  "summary": "AirDrop Finder extension, which shows the AirDrop window in Finder.",
+  "why": "Runs when you open AirDrop.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "AirPlayUIAgent": {
+  "vendor": "Apple",
+  "summary": "AirPlay menu and controls (screen mirroring, speaker selection).",
+  "why": "Runs while you are logged in.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "AirPlayXPCHelper": {
+  "vendor": "Apple",
+  "summary": "Helper for AirPlay connections to speakers, TVs and displays.",
+  "why": "Runs when AirPlay is in use.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "SidecarRelay": {
+  "vendor": "Apple",
+  "summary": "Sidecar relay: connects your Mac to an iPad that is used as a second display.",
+  "why": "Runs when Sidecar is active.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "AccessibilityUIServer": {
+  "vendor": "Apple",
+  "summary": "Draws accessibility overlays such as Zoom, Voice Control labels and Switch Control.",
+  "why": "Runs when accessibility features are on.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "axassetsd": {
+  "vendor": "Apple",
+  "summary": "Accessibility assets daemon: downloads and manages voices and other accessibility assets.",
+  "why": "Runs on demand.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "universalAccessAuthWarn": {
+  "vendor": "Apple",
+  "summary": "Shows the prompt when an app asks for Accessibility (control your computer) access.",
+  "why": "Runs briefly when requested.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "HeadphoneSettingsExtension": {
+  "vendor": "Apple",
+  "summary": "System Settings pane for headphone features.",
+  "why": "Runs when System Settings is open.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "WallpaperAgent": {
+  "vendor": "Apple",
+  "summary": "Wallpaper agent. Draws and changes the desktop picture and screen saver wallpapers.",
+  "why": "Runs while you are logged in.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "AquaAppearanceHelper": {
+  "vendor": "Apple",
+  "summary": "Helper that switches light/dark appearance and accent colors across the interface.",
+  "why": "Runs while you are logged in.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "PowerChime": {
+  "vendor": "Apple",
+  "summary": "Plays the charging sound when you plug in the Mac.",
+  "why": "Runs while you are logged in.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "PowerUIAgent": {
+  "vendor": "Apple",
+  "summary": "Shows power-related UI such as low-battery warnings and charging notices.",
+  "why": "Runs while you are logged in.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "liveactivitiesd": {
+  "vendor": "Apple",
+  "summary": "Live Activities daemon, which shows live widgets from apps and iPhones in the menu bar.",
+  "why": "Runs while you are logged in.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "chronod": {
+  "vendor": "Apple",
+  "summary": "ChronoKit daemon. Drives widget timelines and tells widgets when to refresh.",
+  "why": "Always running while you are logged in.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "WidgetRenderer_Activities": {
+  "vendor": "Apple",
+  "summary": "Renders Live Activity widgets.",
+  "why": "Runs when Live Activities are displayed.",
+  "quit": "Safe. It restarts on demand.",
+  "inferred": true
+ },
+ "UIKitSystem": {
+  "vendor": "Apple",
+  "summary": "Runtime that lets iPhone and iPad apps run on your Mac (Mac Catalyst / iOS apps on Apple silicon).",
+  "why": "Runs while an iPad/iPhone app is open.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "ScreenTimeAgent": {
+  "vendor": "Apple",
+  "summary": "Screen Time agent. Tracks usage and enforces limits, downtime and content restrictions.",
+  "why": "Runs while you are logged in.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "ScreenTimeSettingsAgent": {
+  "vendor": "Apple",
+  "summary": "Screen Time settings agent used by System Settings.",
+  "why": "Runs when settings open.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "UsageTrackingAgent": {
+  "vendor": "Apple",
+  "summary": "Collects app usage data for Screen Time reports.",
+  "why": "Runs while you are logged in.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "ManagedSettingsAgent": {
+  "vendor": "Apple",
+  "summary": "Applies Screen Time and managed-device restrictions to apps and websites.",
+  "why": "Runs while you are logged in.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "CMFSyncAgent": {
+  "vendor": "Apple",
+  "summary": "Communication Filter sync agent. Keeps your call and message blocking and filtering lists in sync (blocked numbers, filtering unknown senders).",
+  "why": "Runs while you are logged in.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "dmd": {
+  "vendor": "Apple",
+  "summary": "Device Management daemon. Applies configuration profiles and managed settings (MDM, Screen Time restrictions).",
+  "why": "Always running.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "assessmentagent": {
+  "vendor": "Apple",
+  "summary": "Automatic Assessment Configuration agent. Locks down the Mac for supervised testing (education).",
+  "why": "Starts only when an exam/assessment app requests it.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "ClassroomDeviceExpert": {
+  "vendor": "Apple",
+  "summary": "Helper for the Classroom app used by teachers to manage student devices in schools.",
+  "why": "Runs only on devices enrolled in Classroom.",
+  "quit": "Safe. It restarts on demand.",
+  "inferred": true
+ },
+ "ClassroomSettings": {
+  "vendor": "Apple",
+  "summary": "Settings for Apple's Classroom features.",
+  "why": "Runs when settings open.",
+  "quit": "Safe. It restarts on demand.",
+  "inferred": true
+ },
+ "studentd": {
+  "vendor": "Apple",
+  "summary": "Student daemon: lets a teacher's Classroom app view or control this Mac. Only active on school-managed devices.",
+  "why": "Runs only in education setups.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "ClassKitAppIntents": {
+  "vendor": "Apple",
+  "summary": "App Intents for ClassKit / Classroom.",
+  "why": "Runs on demand.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "airportd": {
+  "vendor": "Apple",
+  "summary": "Wi-Fi daemon. Scans for networks, joins them, and manages the Wi-Fi hardware.",
+  "why": "Always running. Brief CPU spikes occur while scanning.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "WiFiAgent": {
+  "vendor": "Apple",
+  "summary": "Wi-Fi agent. Shows the Wi-Fi menu and the 'join network' UI.",
+  "why": "Runs while you are logged in.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "wifip2pd": {
+  "vendor": "Apple",
+  "summary": "Wi-Fi peer-to-peer daemon. Powers AWDL, the direct Wi-Fi link used by AirDrop, AirPlay, Handoff and Sidecar.",
+  "why": "Runs whenever those features are active.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "wifivelocityd": {
+  "vendor": "Apple",
+  "summary": "Wi-Fi diagnostics daemon, used by Wireless Diagnostics and system troubleshooting.",
+  "why": "Runs on demand.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "WirelessRadioManagerd": {
+  "vendor": "Apple",
+  "summary": "Manages wireless radios and coexistence (Wi-Fi, Bluetooth, cellular) to avoid interference and save power.",
+  "why": "Always running.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "netbiosd": {
+  "vendor": "Apple",
+  "summary": "NetBIOS name daemon. Lets Windows (SMB) machines on your network find this Mac by name when File Sharing is on.",
+  "why": "Starts when file sharing is enabled.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "mDNSResponderHelper": {
+  "vendor": "Apple",
+  "summary": "Helper to mDNSResponder (Bonjour/DNS) that does privileged network operations.",
+  "why": "Always running.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "networkserviceproxy": {
+  "vendor": "Apple",
+  "summary": "Network Service Proxy. Handles iCloud Private Relay and other system proxies for private browsing and tracking protection.",
+  "why": "Runs when Private Relay or related features are on.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "neagent": {
+  "vendor": "Apple",
+  "summary": "Network Extension agent. Runs VPN, content-filter and proxy apps (for example corporate VPNs) in your login session.",
+  "why": "Runs when a VPN/filter app is active.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "nehelper": {
+  "vendor": "Apple",
+  "summary": "Network Extension helper. Coordinates VPN and network-filter apps with the system.",
+  "why": "Always running.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "nesessionmanager": {
+  "vendor": "Apple",
+  "summary": "Network Extension session manager. Starts, stops and monitors VPN connections.",
+  "why": "Runs when a VPN is configured.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "symptomsd": {
+  "vendor": "Apple",
+  "summary": "Symptoms daemon. Monitors network quality (Wi-Fi, cellular, DNS) and helps macOS decide when connections are poor.",
+  "why": "Always running.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "CommCenter": {
+  "vendor": "Apple",
+  "summary": "Telephony and cellular manager. Handles calls, SMS relay and eSIM/cellular features, including iPhone calls on your Mac.",
+  "why": "Runs on all Macs; mostly idle without cellular.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "callservicesd": {
+  "vendor": "Apple",
+  "summary": "Call services daemon. Handles phone and FaceTime calls, including iPhone calls on the Mac.",
+  "why": "Always running.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "avconferenced": {
+  "vendor": "Apple",
+  "summary": "AV conference daemon. Does the audio/video engine work for FaceTime.",
+  "why": "Runs during FaceTime calls.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "nearbyd": {
+  "vendor": "Apple",
+  "summary": "Nearby Interaction daemon: ultra-wideband and Bluetooth ranging to nearby devices.",
+  "why": "Runs when nearby-device features are used.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "usbmuxd": {
+  "vendor": "Apple",
+  "summary": "USB multiplexing daemon. Lets the Mac talk to iPhones and iPads connected by USB (or Wi-Fi sync).",
+  "why": "Runs when iOS devices are connected.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "remoted": {
+  "vendor": "Apple",
+  "summary": "Remote Device daemon. Lets Xcode and other tools discover and talk to connected iPhones, iPads, watches and Vision Pro.",
+  "why": "Runs when developer or device tools are in use.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "MobileDeviceUpdater": {
+  "vendor": "Apple",
+  "summary": "Updates firmware on connected devices and accessories.",
+  "why": "Runs on demand.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "AMPDeviceDiscoveryAgent": {
+  "vendor": "Apple",
+  "summary": "Apple Media Player device discovery. Detects connected iPhones and iPads so Finder and the Music app can sync with them.",
+  "why": "Runs while you are logged in.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "AMPLibraryAgent": {
+  "vendor": "Apple",
+  "summary": "Apple Media Player library agent. Gives Finder and Music access to the Music, TV and Books library on your Mac.",
+  "why": "Runs while you are logged in.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "accessoryd": {
+  "vendor": "Apple",
+  "summary": "Accessory daemon. Manages MFi and USB accessories and their identity.",
+  "why": "Runs when accessories connect.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "accessoryupdaterd": {
+  "vendor": "Apple",
+  "summary": "Accessory updater daemon. Updates firmware on supported accessories.",
+  "why": "Runs on demand.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "EAUpdaterService": {
+  "vendor": "Apple",
+  "summary": "External Accessory updater: updates firmware of third-party accessories that talk to Apple devices.",
+  "why": "Runs on demand.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "audioaccessoryd": {
+  "vendor": "Apple",
+  "summary": "Audio accessory daemon: pairing, case battery and firmware for AirPods and compatible headphones.",
+  "why": "Runs when AirPods or similar are connected.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "heard": {
+  "vendor": "Apple",
+  "summary": "Hearing health daemon. Powers hearing features of AirPods Pro, Headphone Accommodations and loudness notifications.",
+  "why": "Runs when compatible headphones are connected.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "StandaloneHIDAudService": {
+  "vendor": "Apple",
+  "summary": "Handles buttons and volume controls from USB/HID audio devices such as headsets.",
+  "why": "Runs when a headset connects.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "UVCAssistant": {
+  "vendor": "Apple",
+  "summary": "Camera helper for USB UVC webcams. Makes standard USB cameras available to apps.",
+  "why": "Runs when a USB camera is used.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "VDCAssistant": {
+  "vendor": "Apple",
+  "summary": "Video Device Capture assistant. Provides access to built-in and some external cameras. The light comes on when apps use the camera.",
+  "why": "Runs when any app opens the camera.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "appleh13camerad": {
+  "vendor": "Apple",
+  "summary": "Camera daemon for the built-in camera's image signal processor on Apple silicon (M1-generation chips).",
+  "why": "Runs when the camera is in use.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "cameracaptured": {
+  "vendor": "Apple",
+  "summary": "Camera capture daemon. Coordinates camera access and the green camera indicator.",
+  "why": "Runs when the camera is in use.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "ContinuityCaptureAgent": {
+  "vendor": "Apple",
+  "summary": "Continuity Camera agent. Lets you use your iPhone as webcam or scanner.",
+  "why": "Runs when an iPhone is used as camera.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "ptpcamerad": {
+  "vendor": "Apple",
+  "summary": "PTP camera daemon. Lets the Mac import photos from digital cameras and phones using PTP.",
+  "why": "Runs when a camera connects.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "mscamerad-xpc": {
+  "vendor": "Apple",
+  "summary": "Mass-storage camera helper from Image Capture. Reads photos from camera memory cards.",
+  "why": "Runs when a camera or card is connected.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "icdd": {
+  "vendor": "Apple",
+  "summary": "Image Capture Device daemon. Image Capture and Photos use it to talk to cameras and scanners.",
+  "why": "Runs when devices connect.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "ioupsd": {
+  "vendor": "Apple",
+  "summary": "UPS monitor. Watches an attached uninterruptible power supply to shut down safely.",
+  "why": "Runs when a UPS is connected.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "usbaudiod": {
+  "vendor": "Apple",
+  "summary": "Handles USB audio devices.",
+  "why": "Runs when a USB audio device is connected.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "IOUserBluetoothSerialDriver": {
+  "vendor": "Apple",
+  "summary": "DriverKit Bluetooth serial driver. Provides serial-over-Bluetooth for hardware that needs it.",
+  "why": "Loaded for Bluetooth hardware support.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "nfcd": {
+  "vendor": "Apple",
+  "summary": "NFC daemon. Handles near-field communication for Apple Pay and tap-to-pay features if the hardware supports it.",
+  "why": "Runs on hardware with NFC.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "NFStorageServer": {
+  "vendor": "Apple",
+  "summary": "NFC storage service. Stores the secure data used for contactless features such as Wallet passes.",
+  "why": "Runs with NFC services.",
+  "quit": "Safe. It restarts on demand.",
+  "inferred": true
+ },
+ "seserviced": {
+  "vendor": "Apple",
+  "summary": "Secure Element service. Talks to the secure chip that stores Apple Pay card data.",
+  "why": "Runs for Apple Pay.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "passd": {
+  "vendor": "Apple",
+  "summary": "Passbook / Wallet daemon. Manages Wallet passes and Apple Pay cards.",
+  "why": "Runs when Wallet or Apple Pay is used.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "biometrickitd": {
+  "vendor": "Apple",
+  "summary": "Biometric daemon for Touch ID. Handles fingerprint enrollment and matching.",
+  "why": "Always running on Macs with Touch ID.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "coreautha": {
+  "vendor": "Apple",
+  "summary": "LocalAuthentication agent. Shows Touch ID, Apple Watch and password prompts for apps.",
+  "why": "Runs when an app asks to authenticate you.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "coreauthd": {
+  "vendor": "Apple",
+  "summary": "LocalAuthentication daemon. Manages Touch ID / Apple Watch / password checks.",
+  "why": "Always running.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "ctkd": {
+  "vendor": "Apple",
+  "summary": "CryptoTokenKit daemon. Supports smart cards and hardware tokens.",
+  "why": "Runs when tokens or smart cards are used.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "ctkahp": {
+  "vendor": "Apple",
+  "summary": "CryptoTokenKit access helper. Lets apps use certificates stored on smart cards or the Secure Enclave.",
+  "why": "Runs on demand.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "com.apple.ifdreader": {
+  "vendor": "Apple",
+  "summary": "Smart-card reader driver host (CCID).",
+  "why": "Runs when a smart-card reader is attached.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "lockoutagent": {
+  "vendor": "Apple",
+  "summary": "Lockout agent. Shows lock and inactivity UI after repeated failed unlock attempts or while the screen is locked.",
+  "why": "Runs while you are logged in.",
+  "quit": "Safe. It restarts on demand.",
+  "inferred": true
+ },
+ "secinitd": {
+  "vendor": "Apple",
+  "summary": "Security initialisation daemon. Sets up the App Sandbox for apps as they launch.",
+  "why": "Always running.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "securityd_system": {
+  "vendor": "Apple",
+  "summary": "System security daemon. Provides Keychain and cryptographic services for the system.",
+  "why": "Always running.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "authd": {
+  "vendor": "Apple",
+  "summary": "Authorization daemon. Handles requests for admin rights, such as the password prompts when you install software.",
+  "why": "Runs on demand.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "taskgated": {
+  "vendor": "Apple",
+  "summary": "Task gate daemon. Decides which processes may inspect or debug others, based on entitlements.",
+  "why": "Always running.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "swcd": {
+  "vendor": "Apple",
+  "summary": "Shared Web Credentials daemon. Checks which apps are associated with which websites (Universal Links, passkeys, AutoFill).",
+  "why": "Always running.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "swtransparencyd": {
+  "vendor": "Apple",
+  "summary": "Software transparency daemon. Checks that certificates and security-sensitive software are logged in public transparency records.",
+  "why": "Runs in the background.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "trustevaluationagent": {
+  "vendor": "Apple",
+  "summary": "Evaluates certificate trust on behalf of apps in your session (HTTPS/signing checks).",
+  "why": "Runs on demand.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "xprotectd": {
+  "vendor": "Apple",
+  "summary": "XProtect daemon. Scans apps with Apple's built-in malware signatures when they are launched or changed.",
+  "why": "Always running.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "XProtectUpdateService": {
+  "vendor": "Apple",
+  "summary": "Downloads updates to XProtect's malware signatures.",
+  "why": "Runs periodically.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "XprotectService": {
+  "vendor": "Apple",
+  "summary": "XProtect service. Scans software on launch for known malware with Apple's malware definitions.",
+  "why": "Always running.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "backupd-helper": {
+  "vendor": "Apple",
+  "summary": "Time Machine backup helper. Does file-level work for backupd during a backup.",
+  "why": "Only runs during a Time Machine backup.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "syslogd": {
+  "vendor": "Apple",
+  "summary": "Classic syslog daemon, now forwarding to the unified logging system.",
+  "why": "Always running.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "logd_helper": {
+  "vendor": "Apple",
+  "summary": "Helper to logd that processes and compresses log data.",
+  "why": "Runs briefly.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "diagnostics_agent": {
+  "vendor": "Apple",
+  "summary": "Collects system diagnostic information for support requests.",
+  "why": "Runs on demand.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "feedbackd": {
+  "vendor": "Apple",
+  "summary": "Feedback daemon. Sends feedback you submit via Feedback Assistant.",
+  "why": "Runs when you send feedback.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "ReportCrashService": {
+  "vendor": "Apple",
+  "summary": "Crash-reporting service. Collects crash information from processes that terminate unexpectedly.",
+  "why": "Runs after crashes.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "ReportMemoryException": {
+  "vendor": "Apple",
+  "summary": "Writes reports when a process is killed for exceeding its memory limit.",
+  "why": "Runs after such kills.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "com.apple.MobileAsset.DownloadService.Builtin": {
+  "vendor": "Apple",
+  "summary": "Downloads system assets (language data, fonts, models) on behalf of mobileassetd.",
+  "why": "Runs while assets download.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "assetsubscriptiond": {
+  "vendor": "Apple",
+  "summary": "Tracks which system assets (dictionaries, models, voices) are needed and subscribes to updates.",
+  "why": "Runs in the background.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "suhelperd": {
+  "vendor": "Apple",
+  "summary": "Software Update helper daemon. Does privileged steps of macOS updates.",
+  "why": "Runs during updates.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "com.apple.StreamingUnzipService.privileged": {
+  "vendor": "Apple",
+  "summary": "Unpacks software update and App Store archives as they stream in.",
+  "why": "Runs while apps or updates install.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "systemstats": {
+  "vendor": "Apple",
+  "summary": "System statistics daemon. Collects and stores power, CPU, memory and thermal statistics.",
+  "why": "Always running.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "sysmond": {
+  "vendor": "Apple",
+  "summary": "System monitor daemon. Supplies process and resource data to Activity Monitor and other monitoring tools.",
+  "why": "Runs when Activity Monitor (or similar) is open.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "systemstatusd": {
+  "vendor": "Apple",
+  "summary": "Tracks system status such as battery, thermal and device state for system UI.",
+  "why": "Always running.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "PerfPowerServices": {
+  "vendor": "Apple",
+  "summary": "Performance and power telemetry service. Samples CPU, GPU and power use for diagnostics and power management.",
+  "why": "Always running.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "thermalmonitord": {
+  "vendor": "Apple",
+  "summary": "Thermal monitor. Watches temperature sensors and tells the system to slow down or spin up fans when the Mac gets hot.",
+  "why": "Always running.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "watchdogd": {
+  "vendor": "Apple",
+  "summary": "Watchdog daemon. Restarts the Mac if the system hangs hard.",
+  "why": "Always running.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "smd": {
+  "vendor": "Apple",
+  "summary": "Service Management daemon. Installs and manages privileged helper tools and background items for apps.",
+  "why": "Always running.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "BackgroundTaskManagementAgent": {
+  "vendor": "Apple",
+  "summary": "Background Task Management agent. Shows the 'Login Items & Extensions' notices when an app adds a background item.",
+  "why": "Runs while you are logged in.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "backgroundtaskmanagementd": {
+  "vendor": "Apple",
+  "summary": "Background Task Management daemon. Tracks login items and background launch jobs and enforces your choices in System Settings > Login Items.",
+  "why": "Always running.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "appleeventsd": {
+  "vendor": "Apple",
+  "summary": "Apple Events daemon. Routes AppleScript and automation messages between apps.",
+  "why": "Always running.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "launchservicesd": {
+  "vendor": "Apple",
+  "summary": "Launch Services daemon. Tracks which app opens which file type and handles app launches.",
+  "why": "Always running.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "usermanagerd": {
+  "vendor": "Apple",
+  "summary": "User manager. Handles user sessions and per-user service startup.",
+  "why": "Always running.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "opendirectoryd": {
+  "vendor": "Apple",
+  "summary": "Open Directory daemon. Looks up users, groups and directory accounts, for example at login or when checking file permissions.",
+  "why": "Always running.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "syncdefaultsd": {
+  "vendor": "Apple",
+  "summary": "Syncs certain preferences between your Apple devices through iCloud.",
+  "why": "Runs in the background.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "useractivityd": {
+  "vendor": "Apple",
+  "summary": "User activity daemon. Powers Handoff by sharing what you're doing with your other devices.",
+  "why": "Runs while Handoff is enabled.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "mediaremoteagent": {
+  "vendor": "Apple",
+  "summary": "Media remote agent. Controls Now Playing information and media keys within your session.",
+  "why": "Runs while you are logged in.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "audiomxd": {
+  "vendor": "Apple",
+  "summary": "Audio media experience daemon. Manages audio sessions, routing and device behaviour in new versions of macOS.",
+  "why": "Always running.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "audioanalyticsd": {
+  "vendor": "Apple",
+  "summary": "Audio analytics daemon. Collects audio-quality and device usage metrics.",
+  "why": "Runs in the background.",
+  "quit": "Safe. It restarts on demand.",
+  "inferred": true
+ },
+ "systemsoundserverd": {
+  "vendor": "Apple",
+  "summary": "System sound server. Plays alert sounds and system sounds (for example the 'Funk' alert).",
+  "why": "Always running.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "fontworker": {
+  "vendor": "Apple",
+  "summary": "Font worker. Loads and validates fonts for apps in a sandboxed process.",
+  "why": "Runs when apps load fonts.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "iconservicesd": {
+  "vendor": "Apple",
+  "summary": "Icon services daemon. Renders and caches icons.",
+  "why": "Runs when icons need updating.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "MTLCompilerService": {
+  "vendor": "Apple",
+  "summary": "Metal shader compiler. Compiles GPU shaders for apps and the system. Can use significant CPU for a short while.",
+  "why": "Runs when apps compile shaders.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "MTLAssetUpgraderD": {
+  "vendor": "Apple",
+  "summary": "Metal asset upgrader. Rebuilds cached GPU shaders after updates.",
+  "why": "Runs after OS or app updates.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "CVMServer": {
+  "vendor": "Apple",
+  "summary": "Core Virtual Machine server. A root service used by OpenCL and the GPU compiler to build compute kernels.",
+  "why": "Starts when an app uses OpenCL.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "IOMFB_bics_daemon": {
+  "vendor": "Apple",
+  "summary": "A background daemon tied to the display's framebuffer (IOMobileFramebuffer). Apple does not document it.",
+  "why": "Present on Apple-silicon Macs; lives in /usr/libexec.",
+  "quit": "Don't. It's part of macOS and is restarted automatically.",
+  "inferred": true
+ },
+ "coresymbolicationd": {
+  "vendor": "Apple",
+  "summary": "Symbolication daemon. Turns raw addresses into function names for crash reports and profiling.",
+  "why": "Runs when diagnostics or profiling needs it.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "replayd": {
+  "vendor": "Apple",
+  "summary": "ReplayKit daemon. Records the screen and audio for screen recording and screen sharing.",
+  "why": "Runs while screen recording or sharing.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "corebrightnessd": {
+  "vendor": "Apple",
+  "summary": "Core Brightness daemon. Adjusts display brightness, True Tone and Night Shift.",
+  "why": "Always running.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "CoreLocationAgent": {
+  "vendor": "Apple",
+  "summary": "Core Location agent. Shows location-permission prompts and the arrow in the menu bar.",
+  "why": "Runs while you are logged in.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "routined": {
+  "vendor": "Apple",
+  "summary": "Routine daemon. Learns your significant places and routines to power suggestions such as traffic and 'Time to leave'.",
+  "why": "Runs when Location Services and significant locations are on.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "weatherd": {
+  "vendor": "Apple",
+  "summary": "Weather daemon. Fetches weather data for the Weather app, widgets and Notification Center.",
+  "why": "Runs periodically.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "homed": {
+  "vendor": "Apple",
+  "summary": "HomeKit daemon. Talks to smart-home accessories and syncs your Home setup.",
+  "why": "Runs if you use the Home app.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "findmydevice-user-agent": {
+  "vendor": "Apple",
+  "summary": "Find My Mac agent for your session.",
+  "why": "Runs when Find My is enabled.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "findmylocateagent": {
+  "vendor": "Apple",
+  "summary": "Locates your Mac or paired accessories for Find My.",
+  "why": "Runs when Find My is enabled.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "findmybeaconingd": {
+  "vendor": "Apple",
+  "summary": "Find My beaconing daemon. Lets your Mac help locate nearby lost devices via the Find My network.",
+  "why": "Runs when Find My is enabled.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "searchpartyuseragent": {
+  "vendor": "Apple",
+  "summary": "Find My network agent in your session.",
+  "why": "Runs when Find My is enabled.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "StatusKitAgent": {
+  "vendor": "Apple",
+  "summary": "StatusKit agent. Shares your Focus status with contacts in Messages.",
+  "why": "Runs while you are logged in.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "imagent": {
+  "vendor": "Apple",
+  "summary": "Messages agent (iMessage). Sends and receives iMessage and SMS and syncs them.",
+  "why": "Runs when Messages is signed in.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "contactsd": {
+  "vendor": "Apple",
+  "summary": "Contacts daemon. Manages the address book database and its syncing.",
+  "why": "Runs in the background.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "calaccessd": {
+  "vendor": "Apple",
+  "summary": "Calendar access daemon. Gives apps controlled access to calendars and reminders.",
+  "why": "Runs on demand.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "dataaccessd": {
+  "vendor": "Apple",
+  "summary": "Data Access daemon. Syncs mail, contacts, calendars and notes accounts, including Exchange and Google.",
+  "why": "Runs while those accounts sync.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "AppleSpell": {
+  "vendor": "Apple",
+  "summary": "The system spell checker.",
+  "why": "Runs while an app does spell checking.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "pkd": {
+  "vendor": "Apple",
+  "summary": "PlugInKit daemon. Discovers and launches app extensions (Share, Today widgets, Safari extensions, etc.).",
+  "why": "Always running.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "FindMyWidgetItems": {
+  "vendor": "Apple",
+  "summary": "Provides items for the Find My widget.",
+  "why": "Runs on demand.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "FindMyWidgetPeople": {
+  "vendor": "Apple",
+  "summary": "Provides people for the Find My widget.",
+  "why": "Runs on demand.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "triald_system": {
+  "vendor": "Apple",
+  "summary": "Trial daemon. Downloads experiment and feature-flag settings from Apple that turn new features on gradually.",
+  "why": "Runs periodically.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "mobileactivationd": {
+  "vendor": "Apple",
+  "summary": "Activation daemon. Checks that this Mac or connected iOS device is activated.",
+  "why": "Runs on demand.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "Preview": {
+  "vendor": "Apple",
+  "summary": "Apple's Preview app for PDFs and images.",
+  "why": "You opened a document in it.",
+  "quit": "Quit like any app."
+ },
+ "Storage": {
+  "vendor": "Apple",
+  "summary": "The Storage pane of System Settings.",
+  "why": "Opens with System Settings.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "StorageManagementService": {
+  "vendor": "Apple",
+  "summary": "Calculates how much space apps and files use for System Settings > Storage. It can use lots of CPU for a few minutes while it scans.",
+  "why": "Runs when you open Storage settings or macOS recomputes usage.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "ApplicationsStorageExtension": {
+  "vendor": "Apple",
+  "summary": "Reports how much space installed apps use for System Settings > Storage.",
+  "why": "Runs when you open Storage settings.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "NeptuneOneWallpaper": {
+  "vendor": "Apple",
+  "summary": "Wallpaper provider for a built-in dynamic wallpaper.",
+  "why": "Runs when you set or preview wallpapers.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "IsExtensionEnabled": {
+  "vendor": "Apple",
+  "summary": "Checks whether a Finder Sync extension (for example a cloud-storage badge overlay) is turned on.",
+  "why": "Runs when Finder starts or the extension list changes.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "FeatureAccessAgent": {
+  "vendor": "Apple",
+  "summary": "Checks which iCloud+ and subscription features you may use on this Mac.",
+  "why": "Runs on demand.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "MENotificationAgent": {
+  "vendor": "Apple",
+  "summary": "Media Extension notification agent. Tells you when a third-party media codec extension needs approval or updates.",
+  "why": "Runs on demand.",
+  "quit": "Safe. It restarts on demand.",
+  "inferred": true
+ },
+ "agentstored": {
+  "vendor": "Apple",
+  "summary": "A system store for agent sessions (part of the AgentSessionKit runtime). Apple does not document it publicly; the name suggests it keeps state for system agents and assistants.",
+  "why": "Present on newer macOS versions.",
+  "quit": "Don't. It's part of macOS and is restarted automatically.",
+  "inferred": true
+ },
+ "lskdd": {
+  "vendor": "Apple",
+  "summary": "A daemon from the private CoreLSKD framework. Apple does not document it publicly.",
+  "why": "Part of macOS.",
+  "quit": "Don't. It's part of macOS and is restarted automatically.",
+  "inferred": true
+ },
+ "milod": {
+  "vendor": "Apple",
+  "summary": "A system service reported to handle micro-location / Bluetooth proximity features. First appeared in macOS Sequoia. Documentation is sparse.",
+  "why": "Part of macOS.",
+  "quit": "Don't. It's part of macOS and is restarted automatically.",
+  "inferred": true
+ },
+ "spatialpreviewd": {
+  "vendor": "Apple",
+  "summary": "Spatial Preview daemon. Lets Mac apps send 3D and document content to a nearby Apple Vision Pro for live spatial viewing.",
+  "why": "Part of macOS 27. Active when a Mac app uses Spatial Preview.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "talagentd": {
+  "vendor": "Apple",
+  "summary": "Transparent App Lifecycle agent. Remembers app state so apps can quit, relaunch and resume where they left off, with automatic termination of idle apps.",
+  "why": "Always running for each user.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "SetStoreUpdateService": {
+  "vendor": "Apple",
+  "summary": "Updates a data store of 'sets' used by the system (for example featured or suggested content). Apple does not document it; the name comes from the CascadeSets framework it ships in.",
+  "why": "Several run at once; they are short-lived.",
+  "quit": "Safe. It restarts on demand.",
+  "inferred": true
+ },
+ "com.apple.AmbientDisplayAgent": {
+  "vendor": "Apple",
+  "summary": "Ambient display agent. Controls lock-screen / always-on display style features.",
+  "why": "Runs while you are logged in.",
+  "quit": "Safe. It restarts on demand.",
+  "inferred": true
+ },
+ "com.apple.AppleUserHIDDrivers": {
+  "vendor": "Apple",
+  "summary": "DriverKit driver for HID devices (keyboards, trackpads, game controllers).",
+  "why": "Loaded for input hardware.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "com.apple.Safari.SafeBrowsing.Service": {
+  "vendor": "Apple",
+  "summary": "Safari Safe Browsing service. Checks websites against Google/Tencent safe-browsing lists to warn about phishing and malware.",
+  "why": "Runs while Safari or WebKit browses.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "com.apple.SafariPlatformSupport.Helper": {
+  "vendor": "Apple",
+  "summary": "Safari platform support helper: supplies Safari-related system services to other browsers and apps.",
+  "why": "Runs with Safari or other WebKit features.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "com.apple.appkit.xpc.openAndSavePanelService": {
+  "vendor": "Apple",
+  "summary": "The Open and Save dialog service, which keeps these panels in a separate process for security.",
+  "why": "Runs whenever an app shows an Open/Save panel.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "com.apple.cmio.registerassistantservice": {
+  "vendor": "Apple",
+  "summary": "Camera registration helper. Registers virtual or external cameras with the system.",
+  "why": "Runs when cameras are installed.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "com.apple.cmio.videodriverkithostextension": {
+  "vendor": "Apple",
+  "summary": "DriverKit host for camera extensions and virtual camera drivers.",
+  "why": "Runs with camera extensions.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "com.apple.geod": {
+  "vendor": "Apple",
+  "summary": "Geo daemon. Provides map data and place lookups to Maps, Siri and other apps.",
+  "why": "Runs when apps need location data.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "com.apple.hiservices-xpcservice": {
+  "vendor": "Apple",
+  "summary": "Human Interface Services XPC helper used by AppKit for UI tasks such as capturing events and screen content.",
+  "why": "Runs on demand.",
+  "quit": "Safe. It restarts on demand.",
+  "inferred": true
+ },
+ "com.apple.iCloudHelper": {
+  "vendor": "Apple",
+  "summary": "iCloud helper. Handles iCloud sign-in screens and setup prompts.",
+  "why": "Runs on demand.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "com.apple.mail.SpotlightIndexExtension": {
+  "vendor": "Apple",
+  "summary": "Mail's Spotlight index extension.",
+  "why": "Runs when Mail messages are indexed.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "com.apple.Notes.IntentsExtension": {
+  "vendor": "Apple",
+  "summary": "Notes App Intents extension for Siri and Shortcuts.",
+  "why": "Runs on demand.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "com.apple.Notes.SpotlightIndexExtension": {
+  "vendor": "Apple",
+  "summary": "Notes' Spotlight index extension.",
+  "why": "Runs when Notes data changes.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "com.apple.Notes.WidgetExtension": {
+  "vendor": "Apple",
+  "summary": "Notes widget extension.",
+  "why": "Runs for Notes widgets.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "com.apple.sbd": {
+  "vendor": "Apple",
+  "summary": "Secure Backup daemon. Handles iCloud Keychain secure backup and recovery.",
+  "why": "Runs while iCloud Keychain is on.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "Messages Assistant Extension": {
+  "vendor": "Apple",
+  "summary": "Messages assistant extension: provides smart features inside Messages.",
+  "why": "Runs with Messages.",
+  "quit": "Safe. It restarts on demand.",
+  "inferred": true
+ },
+ "MessagesActionExtension": {
+  "vendor": "Apple",
+  "summary": "Messages action extension that adds share/action options.",
+  "why": "Runs on demand.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "Messages": {
+  "vendor": "Apple",
+  "summary": "Apple's Messages app.",
+  "why": "You or macOS opened Messages.",
+  "quit": "Quit like any app."
+ },
+ "VoiceMemos": {
+  "vendor": "Apple",
+  "summary": "Apple's Voice Memos app.",
+  "why": "Opened by you or by a recording shortcut.",
+  "quit": "Quit like any app."
+ },
+ "System Settings": {
+  "vendor": "Apple",
+  "summary": "Apple's System Settings app.",
+  "why": "You opened it.",
+  "quit": "Quit like any app."
+ },
+ "AppleIDSettings": {
+  "vendor": "Apple",
+  "summary": "System Settings pane for your Apple Account.",
+  "why": "Runs when System Settings is open.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "AppleAccountIntents_macOS": {
+  "vendor": "Apple",
+  "summary": "App Intents for Apple Account settings.",
+  "why": "Runs on demand.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "IntentsExtension": {
+  "vendor": "Apple",
+  "summary": "Generic App Intents extension.",
+  "why": "Runs on demand.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "CalculatorWidget": {
+  "vendor": "Apple",
+  "summary": "Calculator widget.",
+  "why": "Runs for widgets.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "SelectPerson_iOS": {
+  "vendor": "Apple",
+  "summary": "Intent used by widgets that let you pick a person (for example Find My or Contacts widgets).",
+  "why": "Runs for widgets.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "AccountsUISettingsAppIntents": {
+  "vendor": "Apple",
+  "summary": "App Intents for Internet Accounts settings.",
+  "why": "Runs on demand.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "BatteriesAvocadoWidgetExtension": {
+  "vendor": "Apple",
+  "summary": "Batteries widget extension that shows the charge of your devices.",
+  "why": "Runs for widgets.",
+  "quit": "Safe. It restarts on demand."
+ }
+}

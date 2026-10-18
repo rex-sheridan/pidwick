@@ -1,0 +1,238 @@
+{
+ "AssetCacheLocatorService": {
+  "vendor": "Apple",
+  "summary": "Looks for a Content Caching server on your local network so Apple downloads (macOS and app updates, iCloud data) can come from a nearby Mac instead of the internet.",
+  "why": "Runs in the background on all Macs; only does anything if someone on the network has Content Caching turned on.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "BTLEServerAgent": {
+  "vendor": "Apple",
+  "summary": "Bluetooth Low Energy server agent. Lets the Mac act as a BLE peripheral and advertise services to nearby devices (for example Continuity features).",
+  "why": "Runs when Bluetooth LE services are needed.",
+  "quit": "Safe. It restarts on demand.",
+  "inferred": true
+ },
+ "CallHistorySyncHelper": {
+  "vendor": "Apple",
+  "summary": "Syncs your call history between your iPhone and Mac.",
+  "why": "Runs when calls through iPhone are enabled.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "CloudKeychainProxy": {
+  "vendor": "Apple",
+  "summary": "Sends iCloud Keychain changes to and from iCloud so your passwords and passkeys stay in sync.",
+  "why": "Runs while iCloud Keychain / Passwords sync is on.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "CrashReporterSupportHelper": {
+  "vendor": "Apple",
+  "summary": "A privileged helper for the crash reporter. It gathers the information in crash reports.",
+  "why": "Runs after crashes.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "CredentialProviderExtensionHelper": {
+  "vendor": "Apple",
+  "summary": "Helper for AutoFill credential providers (Passwords app and password-manager extensions such as 1Password) used by Safari.",
+  "why": "Runs when Safari autofills a password.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "EscrowSecurityAlert": {
+  "vendor": "Apple",
+  "summary": "Shows the alert asking you to confirm or reset your iCloud security code for Keychain recovery.",
+  "why": "Runs only when iCloud Keychain needs attention.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "GamePolicyAgent": {
+  "vendor": "Apple",
+  "summary": "Game Mode agent. It gives priority to a full-screen game on the CPU, GPU and Bluetooth, and applies game-related policies.",
+  "why": "Runs while you are logged in.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "gamepolicyd": {
+  "vendor": "Apple",
+  "summary": "Game policy daemon. Decides when Game Mode turns on and applies it.",
+  "why": "Always running.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "IMTransferAgent": {
+  "vendor": "Apple",
+  "summary": "Messages attachment transfer agent. Uploads and downloads photos and files sent in iMessage.",
+  "why": "Runs when Messages sends or receives attachments.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "Messages Storage Management Extension": {
+  "vendor": "Apple",
+  "summary": "Reports how much space Messages attachments use for System Settings > Storage.",
+  "why": "Runs when you open Storage settings.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "PrefPaneSearchIntent": {
+  "vendor": "Apple",
+  "summary": "App Intent that lets Spotlight and Siri jump to System Settings panes.",
+  "why": "Runs on demand.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "SettingsImportExtension": {
+  "vendor": "Apple",
+  "summary": "System Settings extension that imports settings when migrating or restoring.",
+  "why": "Runs when System Settings is open.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "WindowManagerControlsExtension": {
+  "vendor": "Apple",
+  "summary": "Control Center extension for Stage Manager controls.",
+  "why": "Runs on demand.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "XProtectBridgeService": {
+  "vendor": "Apple",
+  "summary": "Bridge between XProtect (Apple's malware scanner) and apps that request a scan.",
+  "why": "Runs when software is scanned.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "amsondevicestoraged": {
+  "vendor": "Apple",
+  "summary": "Apple Media Services on-device storage daemon. Stores purchase, download and media-service data on the Mac.",
+  "why": "Runs for the App Store and other media services.",
+  "quit": "Don't. It's part of macOS and is restarted automatically.",
+  "inferred": true
+ },
+ "appstored": {
+  "vendor": "Apple",
+  "summary": "App Store daemon. Downloads, installs and updates apps and handles App Store purchases and licences.",
+  "why": "Runs in the background, busy during app updates.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "appstoreagent": {
+  "vendor": "Apple",
+  "summary": "App Store agent for your session. Coordinates app updates and notifications with appstored.",
+  "why": "Runs while you are logged in.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "com.apple.AppStoreDaemon.StorePrivilegedODRService": {
+  "vendor": "Apple",
+  "summary": "Privileged service for On-Demand Resources: downloads extra content for App Store apps when needed.",
+  "why": "Runs while such content downloads.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "bluetoothuserd": {
+  "vendor": "Apple",
+  "summary": "Bluetooth daemon for your login session. Handles pairing UI and Bluetooth preferences for you.",
+  "why": "Runs while you are logged in.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "cut": {
+  "vendor": "Apple",
+  "summary": "The `cut` command-line tool, which extracts columns from text. Scripts and shells use it constantly.",
+  "why": "A script or terminal command ran it.",
+  "quit": "It finishes in milliseconds."
+ },
+ "facetimemessagestored": {
+  "vendor": "Apple",
+  "summary": "Stores FaceTime messages and call-related data.",
+  "why": "Runs with FaceTime.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "fairplaydeviceidentityd": {
+  "vendor": "Apple",
+  "summary": "FairPlay device identity daemon. Provides this Mac's identity for DRM-protected Apple content.",
+  "why": "Runs on demand.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "fskitd": {
+  "vendor": "Apple",
+  "summary": "FSKit daemon. Hosts file system modules (such as exFAT and MS-DOS) that run in user space.",
+  "why": "Runs when disks use those formats.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "fskit_agent": {
+  "vendor": "Apple",
+  "summary": "FSKit agent. Lets file system modules run in your login session.",
+  "why": "Runs when disks use those formats.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "fskit_helper": {
+  "vendor": "Apple",
+  "summary": "FSKit helper process for file system modules.",
+  "why": "Runs when disks use those formats.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "installcoordinationd": {
+  "vendor": "Apple",
+  "summary": "Install coordination daemon. Schedules and coordinates app installs and updates so they do not conflict.",
+  "why": "Runs during installs and updates.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "jetpackassetd": {
+  "vendor": "Apple",
+  "summary": "Jet pack asset daemon. Downloads and caches content assets (such as images and layouts) for App Store and Apple media apps.",
+  "why": "Runs in the background.",
+  "quit": "Safe. It restarts on demand.",
+  "inferred": true
+ },
+ "keybagd": {
+  "vendor": "Apple",
+  "summary": "Keybag daemon. Manages the keys that protect your data when the Mac is locked or being unlocked.",
+  "why": "Always running.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "linkd": {
+  "vendor": "Apple",
+  "summary": "Link daemon. Runs the App Intents actions that Shortcuts, Siri and Spotlight can perform.",
+  "why": "Runs on demand.",
+  "quit": "Safe. It restarts on demand.",
+  "inferred": true
+ },
+ "localizationswitcherd": {
+  "vendor": "Apple",
+  "summary": "Handles switching language and region settings across the system.",
+  "why": "Runs when you change language or region.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "logind": {
+  "vendor": "Apple",
+  "summary": "Login daemon. Part of the login session machinery in CoreServices.",
+  "why": "Part of macOS.",
+  "quit": "Don't. It's part of macOS and is restarted automatically.",
+  "inferred": true
+ },
+ "mapssyncd": {
+  "vendor": "Apple",
+  "summary": "Maps sync daemon. Syncs your favorites, guides and recents in Maps through iCloud.",
+  "why": "Runs in the background.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "mmaintenanced": {
+  "vendor": "Apple",
+  "summary": "Maintenance daemon. Performs periodic system housekeeping.",
+  "why": "Runs occasionally.",
+  "quit": "Don't. It's part of macOS and is restarted automatically.",
+  "inferred": true
+ },
+ "oahd": {
+  "vendor": "Apple",
+  "summary": "Rosetta 2 daemon. Supports running Intel (x86-64) apps on Apple silicon by translating them.",
+  "why": "Present when Rosetta is installed; active while Intel apps run.",
+  "quit": "Don't. It's part of macOS and is restarted automatically."
+ },
+ "online-auth-agent": {
+  "vendor": "Apple",
+  "summary": "Online authentication agent. Handles sign-in prompts used by system services.",
+  "why": "Runs on demand.",
+  "quit": "Safe. It restarts on demand.",
+  "inferred": true
+ },
+ "promotedcontentd": {
+  "vendor": "Apple",
+  "summary": "Promoted content daemon. Fetches ads shown in Apple apps such as the App Store and News. Turn off Apple Advertising in Privacy & Security to limit this.",
+  "why": "Runs periodically.",
+  "quit": "Safe. It restarts on demand."
+ },
+ "systemsettingsagent": {
+  "vendor": "Apple",
+  "summary": "Background agent for System Settings that keeps the search index of settings.",
+  "why": "Runs while you are logged in.",
+  "quit": "Safe. It restarts on demand.",
+  "inferred": true
+ }
+}

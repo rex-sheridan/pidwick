@@ -3,6 +3,7 @@ package ui
 import (
 	"fmt"
 	"path/filepath"
+	"regexp"
 	"sort"
 	"strings"
 	"time"
@@ -123,6 +124,11 @@ func renderOverview(in *proc.Info, w int) string {
 	switch {
 	case in.KB != nil:
 		d.para(in.KB.Summary)
+		if in.KB.Inferred {
+			d.line(sDim.Render("Inferred from its name and the framework it lives in; Apple doesn't document this one."))
+		}
+	case in.Sign.Kind == proc.SignerApple:
+		d.para(fmt.Sprintf("“%s” is an Apple-signed part of macOS that Pidwick has no description for yet.%s", p.Name, frameworkHint(p.Path)))
 	case in.Bundle != nil && in.Bundle.Name != "":
 		msg := fmt.Sprintf("Not in Pidwick's built-in list of known processes. It belongs to the application %s%s.",
 			in.Bundle.Name, versionSuffix(in.Bundle.Version))
@@ -264,6 +270,17 @@ func renderOverview(in *proc.Info, w int) string {
 		d.line(strings.Repeat("  ", len(in.Lineage)+1) + sDim.Render("└ "+procLabel(c)))
 	}
 	return d.b.String()
+}
+
+var frameworkRe = regexp.MustCompile(`/([A-Za-z0-9]+)\.framework/`)
+
+// frameworkHint gives a clue about an undocumented system process from the
+// framework that ships it.
+func frameworkHint(path string) string {
+	if m := frameworkRe.FindStringSubmatch(path); m != nil {
+		return " It ships inside Apple's " + m[1] + " framework, so it most likely supports that area of the system."
+	}
+	return ""
 }
 
 func versionSuffix(v string) string {
@@ -465,8 +482,10 @@ func renderNetwork(in *proc.Info, w int) string {
 	return d.b.String()
 }
 
+var tabNames = []string{"1 Overview", "2 Files", "3 Network"}
+
 func tabBar(active int, w int) string {
-	names := []string{"1 Overview", "2 Files", "3 Network"}
+	names := tabNames
 	var parts []string
 	for i, n := range names {
 		if i == active {

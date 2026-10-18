@@ -149,6 +149,9 @@ func List(ctx context.Context) ([]Process, error) {
 				}
 			}
 		}
+		if strings.Contains(p.Name, "/") {
+			p.Name = filepath.Base(p.Name) // e.g. "./pidwick"
+		}
 		if p.Command == "" {
 			p.Command = comm
 		}

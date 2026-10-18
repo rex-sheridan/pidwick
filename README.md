@@ -25,14 +25,23 @@ The **trust check** is a transparent heuristic (code signature, Gatekeeper /
 notarization, location, impersonation of Apple process names, persistence,
 listening sockets). It is not an antivirus; each finding explains itself.
 
-## Keys
+## Mouse and keyboard
 
-`↑↓`/`jk` select · `tab`/`1-3` switch view · `J`/`K` scroll detail · `/` filter ·
-`s` sort · `a` hide Apple/system processes · `r` rescan selected · `f` reveal in
-Finder · `c` copy path · `w` web search · `q` quit
+- **Click** a process to select it; click a tab to switch; click the filter row to search; wheel scrolls.
+- **Select text** in the detail pane by dragging; **double-click** selects a word
+  (paths and IDs stay whole), **triple-click** a line. Releasing copies to the clipboard.
+  Pidwick implements this itself because terminals stop selecting once an app captures the mouse.
+  `m` releases the mouse so your terminal's own selection works (press `m` again to restore clicking).
+- `y` copies the whole current view.
+- **Kill** with `x`: a confirmation offers `t` terminate (SIGTERM), `k` force kill (SIGKILL), or `a`
+  terminate the process and all its descendants. It warns about system components, launchd
+  auto-restart, other users' processes and child processes, and refuses PID 1 and Pidwick itself.
+
+`↑↓`/`jk` select · `tab`/`1-3` view · `J`/`K` scroll · `/` filter · `s` sort · `a` hide Apple/system ·
+`r` rescan selected · `f` reveal in Finder · `c` copy path · `w` web search · `q` quit
 
 ## How it gathers data
 
 `ps`, `lsof`, `codesign`, `spctl`, `pkgutil`, `launchctl`, launchd plists,
 app `Info.plist`s and a built-in knowledge base of well-known macOS processes
-(`internal/proc/kb.json`; contributions welcome).
+(`internal/proc/kb/*.json`, ~430 entries plus pattern rules for widgets, App Intents, Storage and DriverKit processes; entries marked `inferred` are deduced from the name and framework rather than documented).
