@@ -6,12 +6,24 @@ to trust it, and what it's touching**.
 
 Built with [Bubble Tea](https://github.com/charmbracelet/bubbletea).
 
-## Run
+## Install
+
+Requires macOS and [Go](https://go.dev/dl/) 1.24 or newer.
 
 ```sh
-go build -o pidwick . && ./pidwick
-sudo ./pidwick   # also shows open files/connections of root-owned processes
+go install github.com/rex-sheridan/pidwick@latest   # puts `pidwick` in $(go env GOPATH)/bin
 ```
+
+or from a checkout:
+
+```sh
+git clone https://github.com/rex-sheridan/pidwick && cd pidwick
+go build -o pidwick . && ./pidwick
+```
+
+Run it as your own user to inspect your own processes. Use `sudo pidwick` to also see the open
+files and connections of root-owned processes (macOS hides them otherwise). Pidwick only reads
+system state, except when you press `x` to send a signal after confirming.
 
 ## What it shows for the selected process
 
@@ -45,6 +57,29 @@ listening sockets). It is not an antivirus; each finding explains itself.
 `ps`, `lsof`, `codesign`, `spctl`, `pkgutil`, `launchctl`, launchd plists,
 app `Info.plist`s and a built-in knowledge base of well-known macOS processes
 (`internal/proc/kb/*.json`, ~430 entries plus pattern rules for widgets, App Intents, Storage and DriverKit processes; entries marked `inferred` are deduced from the name and framework rather than documented).
+
+## Limitations
+
+- macOS only. It shells out to `ps`, `lsof`, `codesign`, `spctl`, `pkgutil` and `launchctl`, so it
+  is slower and shallower than tools that call macOS APIs directly.
+- The trust verdict is a set of rules, not malware detection, and there is no VirusTotal lookup.
+- The built-in descriptions are hand-written. Entries marked "inferred" are deduced from names and
+  framework paths, not from Apple documentation, and some may be wrong. Corrections welcome.
+- No resource graphs, thread views, priority control or suspend/resume.
+
+## Related projects
+
+Pidwick is an *explainer* more than a monitor. If you need something else, these are worth a look:
+
+- [TaskExplorer](https://objective-see.org/tools.html) (Objective-See): mature GUI for spotting
+  malware, with signature status, loaded libraries, files and connections.
+- [Process Explorer for Mac](https://github.com/microsoft/Procexp-Mac): Windows Process Explorer
+  style GUI with process trees, handles, VirusTotal and deep process control.
+- [ProcLens](https://github.com/canberkys/proclens): native Task Manager style app with launchd management.
+- [pstop](https://github.com/lu-zhengda/pstop): another Bubble Tea process browser for the terminal.
+- [Process Viewer](https://github.com/g-baskin/process-viewer): desktop app with plain-English process descriptions.
+- [launchk](https://github.com/mach-kernel/launchk): terminal browser for launchd jobs.
+- `htop`, `btop`, [mactop](https://github.com/context-labs/mactop): resource monitors for the terminal.
 
 ## License
 

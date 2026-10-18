@@ -195,19 +195,16 @@ func (l *Launch) hintJava() {
 
 var scriptRuntimes = map[string]string{
 	"node": "Node.js", "nodejs": "Node.js", "deno": "Deno", "bun": "Bun",
-	"python": "Python", "python3": "Python", "ruby": "Ruby", "perl": "Perl",
+	"python": "Python", "ruby": "Ruby", "perl": "Perl",
 	"php": "PHP", "bash": "Bash", "sh": "sh", "zsh": "zsh", "dash": "sh",
 	"osascript": "AppleScript", "lua": "Lua",
 }
 
 func (l *Launch) parseScript(exe string, args []string) {
-	name := exe
-	// python3.12, ruby3.3, ...
-	for k := range scriptRuntimes {
-		if strings.HasPrefix(exe, k) && strings.Trim(exe[len(k):], "0123456789.") == "" {
-			name = k
-			break
-		}
+	// python3.12 -> python, ruby3.3 -> ruby
+	name := strings.TrimRight(exe, "0123456789.")
+	if _, ok := scriptRuntimes[exe]; ok {
+		name = exe
 	}
 	rt, ok := scriptRuntimes[name]
 	if !ok {
