@@ -96,6 +96,11 @@ func roleOf(path string, b *Bundle) string {
 			return "XPC service bundled inside " + appName + " (a sandboxed helper the app delegates work to)"
 		}
 		return "XPC service (a helper process that another program delegates work to)"
+	case strings.Contains(path, ".appex/"):
+		if appName != "" {
+			return "app extension bundled inside " + appName + " (a plug-in the system loads on demand)"
+		}
+		return "app extension (a plug-in the system loads on demand)"
 	case strings.Contains(path, "/Contents/Library/LoginItems/"):
 		return "login item helper bundled inside " + appName + " (starts at login to run in the background)"
 	case strings.Contains(path, "/Library/SystemExtensions/"):

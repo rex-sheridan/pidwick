@@ -6,6 +6,10 @@ to trust it, and what it's touching**.
 
 Built with [Bubble Tea](https://github.com/charmbracelet/bubbletea).
 
+![Pidwick demo](docs/demo.gif)
+
+The demo is generated from [`demo.tape`](demo.tape) with [VHS](https://github.com/charmbracelet/vhs): `vhs demo.tape`.
+
 ## Install
 
 Requires macOS and [Go](https://go.dev/dl/) 1.24 or newer.

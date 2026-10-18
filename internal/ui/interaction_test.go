@@ -210,3 +210,36 @@ func TestOverlayKeepsDimensions(t *testing.T) {
 		}
 	}
 }
+
+func TestFilterResetsCursorWhenSelectionDisappears(t *testing.T) {
+	var tm tea.Model = loaded(t, 120, 40)
+	m := tm.(Model)
+	// move far down the list, then filter to something that excludes it
+	tm, _ = tm.Update(tea.KeyMsg{Type: tea.KeyEnd})
+	m = tm.(Model)
+	if m.cursor == 0 {
+		t.Skip("list too short")
+	}
+	tm, _ = tm.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune("/")})
+	for _, r := range "launchd" {
+		tm, _ = tm.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{r}})
+	}
+	m = tm.(Model)
+	if m.cursor != 0 || m.offset != 0 {
+		t.Fatalf("cursor=%d offset=%d, want 0/0 (%d rows)", m.cursor, m.offset, len(m.view))
+	}
+}
+
+func TestIsCodeFile(t *testing.T) {
+	for p, want := range map[string]bool{
+		"/opt/homebrew/lib/libfoo.dylib":                                   true,
+		"/Applications/X.app/Contents/Frameworks/Y.framework/Versions/A/Y": true,
+		"/Applications/X.app/Contents/PlugIns/Z.appex/Contents/MacOS/Z":    true,
+		"/x/Z.appex/Contents/Resources/Assets.car":                         false,
+		"/private/var/folders/c7/T/com.apple.iconservices.store/AB.isdata": false,
+	} {
+		if got := isCodeFile(p); got != want {
+			t.Errorf("isCodeFile(%q) = %v, want %v", p, got, want)
+		}
+	}
+}

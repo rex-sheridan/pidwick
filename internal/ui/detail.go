@@ -126,7 +126,7 @@ func renderOverview(in *proc.Info, w int) string {
 	case in.KB != nil:
 		d.para(in.KB.Summary)
 		if in.KB.Inferred {
-			d.line(sDim.Render("Inferred from its name and the framework it lives in; Apple doesn't document this one."))
+			d.line(sDim.Render("Inferred from its name and location; the vendor doesn't document this one."))
 		}
 	case in.Sign.Kind == proc.SignerApple:
 		d.para(fmt.Sprintf("“%s” is an Apple-signed part of macOS that Pidwick has no description for yet.%s", p.Name, frameworkHint(p.Path)))
@@ -408,6 +408,8 @@ func whyBullets(in *proc.Info) []string {
 	if len(in.Lineage) > 0 {
 		par := in.Lineage[len(in.Lineage)-1]
 		switch {
+		case par.PID == 1 && in.Job == nil && in.JobLabel == "" && in.Role != "" && p.Kind != proc.KindSystem:
+			out = append(out, "Started on demand by launchd as "+in.Role+".")
 		case par.PID == 1 && in.Job == nil && in.JobLabel == "" && p.Kind != proc.KindSystem:
 			out = append(out, "Its parent process has exited, so macOS's launchd adopted it. That's normal for something started from a terminal that was later closed, or for programs that deliberately detach (servers, build daemons). Check 'Started in' for where it was launched from.")
 		case par.PID == 1:
@@ -497,15 +499,19 @@ func renderFiles(in *proc.Info, w int) string {
 		d.line(sDim.Render(fmt.Sprintf("%-5s ", dv.FD)) + truncLeft(dv.Name, w-6))
 	}
 
-	var third, sys []string
+	var third []string
+	var sys, data int
 	for _, l := range h.Libs {
-		if isSystemLib(l) {
-			sys = append(sys, l)
-		} else {
+		switch {
+		case isSystemLib(l):
+			sys++
+		case isCodeFile(l):
 			third = append(third, l)
+		default:
+			data++ // caches and other files the process memory-maps
 		}
 	}
-	d.section(fmt.Sprintf("Code loaded (%d system, %d other)", len(sys), len(third)))
+	d.section(fmt.Sprintf("Code loaded (%d system, %d other)", sys, len(third)))
 	if len(third) == 0 {
 		d.line(sDim.Render("Only Apple/system libraries."))
 	}
@@ -516,8 +522,17 @@ func renderFiles(in *proc.Info, w int) string {
 		}
 		d.line(truncLeft(l, w))
 	}
+	if data > 0 {
+		d.line(sDim.Render(fmt.Sprintf("Plus %d memory-mapped data files (caches, fonts, databases).", data)))
+	}
 	return d.b.String()
 }
+
+var codeFileRe = regexp.MustCompile(`(\.dylib|\.so|\.node)$|/Contents/MacOS/[^/]+$|\.framework/(Versions/[^/]+/)?[^/.]+$`)
+
+// isCodeFile reports whether a mapped file looks like loadable code rather
+// than a cache or data file.
+func isCodeFile(p string) bool { return codeFileRe.MatchString(p) }
 
 func isSystemLib(p string) bool {
 	for _, pre := range []string{"/System/", "/usr/lib/", "/Library/Apple/", "/private/var/db/dyld", "/usr/libexec/", "/System/Volumes/Preboot/Cryptexes/"} {

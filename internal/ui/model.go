@@ -173,11 +173,17 @@ func (m *Model) rebuild() {
 	})
 	m.view = view
 	if hadSel {
+		found := false
 		for i, p := range m.view {
 			if p.PID == keep.PID {
-				m.cursor = i
+				m.cursor, found = i, true
 				break
 			}
+		}
+		if !found {
+			// The selected process was filtered out: start from the top
+			// instead of landing wherever the old index happens to be.
+			m.cursor, m.offset = 0, 0
 		}
 	}
 	m.clamp()
