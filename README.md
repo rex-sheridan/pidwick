@@ -45,3 +45,7 @@ listening sockets). It is not an antivirus; each finding explains itself.
 `ps`, `lsof`, `codesign`, `spctl`, `pkgutil`, `launchctl`, launchd plists,
 app `Info.plist`s and a built-in knowledge base of well-known macOS processes
 (`internal/proc/kb/*.json`, ~430 entries plus pattern rules for widgets, App Intents, Storage and DriverKit processes; entries marked `inferred` are deduced from the name and framework rather than documented).
+
+## License
+
+MIT. See [LICENSE](LICENSE).
