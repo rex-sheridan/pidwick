@@ -1,0 +1,36 @@
+# Built binary (go build -o pidwick .)
+/pidwick
+
+# Go build artifacts
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+/bin/
+/dist/
+coverage.txt
+coverage.html
+coverage.out
+
+# Local Go workspace overrides
+go.work
+go.work.sum
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Editors / IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Local env
+.env
+.env.local
