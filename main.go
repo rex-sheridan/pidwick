@@ -8,7 +8,7 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 
-	"github.com/rex/pidwick/internal/ui"
+	"github.com/rex-sheridan/pidwick/internal/ui"
 )
 
 func main() {

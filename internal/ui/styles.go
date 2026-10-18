@@ -3,7 +3,7 @@ package ui
 import (
 	"github.com/charmbracelet/lipgloss"
 
-	"github.com/rex/pidwick/internal/proc"
+	"github.com/rex-sheridan/pidwick/internal/proc"
 )
 
 var (

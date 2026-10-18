@@ -10,7 +10,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/x/ansi"
 
-	"github.com/rex/pidwick/internal/proc"
+	"github.com/rex-sheridan/pidwick/internal/proc"
 )
 
 func (m Model) detailX() int { return m.leftWidth() + 3 }

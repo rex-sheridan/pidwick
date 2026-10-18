@@ -1,4 +1,4 @@
-module github.com/rex/pidwick
+module github.com/rex-sheridan/pidwick
 
 go 1.27.2
 

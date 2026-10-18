@@ -8,7 +8,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/x/ansi"
 
-	"github.com/rex/pidwick/internal/proc"
+	"github.com/rex-sheridan/pidwick/internal/proc"
 )
 
 func loaded(t *testing.T, w, h int) Model {
