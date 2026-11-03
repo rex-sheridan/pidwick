@@ -239,5 +239,74 @@
   "summary": "A login-item agent that belongs to the new Microsoft Teams app. It keeps notifications and presence running.",
   "why": "Installed with Microsoft Teams.",
   "quit": "Quit Teams or turn off 'Open at login' in its settings."
+ },
+ "ChatGPT": {
+  "vendor": "OpenAI",
+  "summary": "The ChatGPT desktop app. It also bundles Codex, OpenAI's coding agent, which is why you see several Codex helper processes.",
+  "why": "Installed from OpenAI; often set to launch at login.",
+  "quit": "Quit like any app. Chats are saved on OpenAI's servers; a running Codex task would stop."
+ },
+ "bare-modifier-monitor": {
+  "vendor": "OpenAI",
+  "summary": "A ChatGPT helper that watches for bare modifier-key presses (such as tapping Option) so it can trigger the global shortcut. It reads keyboard events, which is why macOS asks for Input Monitoring or Accessibility permission.",
+  "why": "Started by the ChatGPT app.",
+  "quit": "Safe. Quitting ChatGPT ends it.",
+  "inferred": true
+ },
+ "codex-code-mode-host": {
+  "vendor": "OpenAI",
+  "summary": "A host process for Codex's code mode: it runs the commands and code that the Codex agent writes in a separate process from the app.",
+  "why": "Started by the ChatGPT/Codex app when an agent task is running.",
+  "quit": "Safe. It stops whatever Codex task was using it.",
+  "inferred": true
+ },
+ "node_repl": {
+  "vendor": "OpenAI",
+  "summary": "A Node.js read-eval-print loop that ChatGPT/Codex uses as a scripting sandbox for tools such as computer use and artifacts.",
+  "why": "Started by the ChatGPT/Codex app.",
+  "quit": "Safe. It restarts when needed.",
+  "inferred": true
+ },
+ "SkyComputerUseService": {
+  "vendor": "OpenAI",
+  "summary": "Codex Computer Use. Lets the Codex agent see your screen and control apps with clicks and typing. It needs Screen Recording and Accessibility permission.",
+  "why": "Installed under ~/.codex by the Codex app when you enabled computer use.",
+  "quit": "Safe. Computer-use tasks stop. Revoke its permissions in System Settings > Privacy & Security if you no longer want it."
+ },
+ "OpenCode": {
+  "vendor": "Anomaly (OpenCode)",
+  "summary": "The OpenCode desktop app, an open-source AI coding agent that runs models against your project files.",
+  "why": "Installed by you from opencode.ai.",
+  "quit": "Quit like any app. A running agent task stops."
+ },
+ "opencode-cli": {
+  "vendor": "Anomaly (OpenCode)",
+  "summary": "The OpenCode command-line engine that the desktop app runs to do the actual agent work (it reads and edits your project files and runs commands).",
+  "why": "Started by the OpenCode desktop app.",
+  "quit": "Safe. Quitting OpenCode ends it; killing it stops the current task."
+ },
+ "DropboxUpdater": {
+  "vendor": "Dropbox",
+  "summary": "Dropbox's background updater. It checks for and installs new versions of Dropbox.",
+  "why": "Installed with Dropbox, in your home folder rather than /Applications.",
+  "quit": "Safe. Dropbox starts it again when it next checks for updates."
+ },
+ "limactl": {
+  "vendor": "Lima project",
+  "summary": "Lima's control tool. It starts and supervises Linux virtual machines on your Mac (used directly, or by Colima, Rancher Desktop and similar tools for containers).",
+  "why": "Installed with Homebrew. A running instance means some VM is up, and a com.apple.Virtualization.VirtualMachine process is its child or sibling.",
+  "quit": "Quitting it stops the VM it manages and any containers inside. Prefer `limactl stop <name>`."
+ },
+ "op": {
+  "vendor": "AgileBits (1Password)",
+  "summary": "The 1Password command-line tool. Scripts and developer tools use it to read secrets from your vault.",
+  "why": "Installed with Homebrew or from 1password.com. Something (a shell, an IDE, a script) ran it, often to fetch a secret.",
+  "quit": "Safe. It exits when its command is done."
+ },
+ "node": {
+  "vendor": "OpenJS Foundation (Node.js)",
+  "summary": "The Node.js JavaScript runtime. What it does depends entirely on the script it runs. See 'What it's running'.",
+  "why": "A developer tool, build step, dev server or app (including Electron-style tools) started it.",
+  "quit": "Depends on the script. If a dev server or tool you started, closing it is safe. For an app's own runtime, quit the app instead."
  }
 }

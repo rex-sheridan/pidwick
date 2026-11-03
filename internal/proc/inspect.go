@@ -4,7 +4,6 @@ import (
 	"context"
 	"os"
 	"path/filepath"
-	"regexp"
 	"strconv"
 	"strings"
 	"sync"
@@ -26,7 +25,7 @@ type Info struct {
 	Bundle   *Bundle
 	Sign     Signature
 	Package  *Package
-	Brew     string // Homebrew formula
+	Brew     *Brew // owning Homebrew package, if any
 	Job      *Job
 	JobLabel string // label from launchctl when no plist matched
 	KB       *Entry
@@ -52,7 +51,7 @@ type static struct {
 	bundle   *Bundle
 	sign     Signature
 	pkg      *Package
-	brew     string
+	brew     *Brew
 }
 
 var staticCache sync.Map // path -> *static
@@ -79,7 +78,7 @@ func staticFor(ctx context.Context, path string) *static {
 		s.sign = inspectSignature(ctx, path, target)
 		s.pkg = packageFor(ctx, path)
 	}
-	s.brew = brewFormula(path)
+	s.brew = brewFor(ctx, path)
 	s.role = roleOf(path, s.bundle)
 	staticCache.Store(path, s)
 	return s
@@ -115,15 +114,6 @@ func roleOf(path string, b *Bundle) string {
 		return "main executable of the application " + appName
 	case appName != "":
 		return "executable inside the application " + appName
-	}
-	return ""
-}
-
-var brewRe = regexp.MustCompile(`/(?:opt/homebrew|usr/local)/(?:Cellar|Caskroom)/([^/]+)/`)
-
-func brewFormula(path string) string {
-	if m := brewRe.FindStringSubmatch(path); m != nil {
-		return m[1]
 	}
 	return ""
 }

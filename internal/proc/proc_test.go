@@ -1,6 +1,7 @@
 package proc
 
 import (
+	"strings"
 	"testing"
 	"time"
 )
@@ -133,4 +134,19 @@ func TestJudge(t *testing.T) {
 			t.Errorf("level = %v", v.Level)
 		}
 	})
+}
+
+func TestFamilyPatterns(t *testing.T) {
+	for _, name := range []string{
+		"Codex (Renderer)", "Codex (Service)", "Slack Helper (GPU)",
+		"BiomeSELFIngestor", "browser_crashpad_handler", "ssh.sock [mux]",
+		"<defunct>", "sleep", "node", "limactl",
+	} {
+		if e, ok := Lookup(name); !ok || e.Summary == "" || e.Quit == "" {
+			t.Errorf("Lookup(%q) = %v, %v", name, e, ok)
+		}
+	}
+	if e, _ := Lookup("Codex (Renderer)"); !strings.Contains(e.Summary, "renderer") || !strings.Contains(e.Summary, "Codex") {
+		t.Errorf("summary = %q", e.Summary)
+	}
 }

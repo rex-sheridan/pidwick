@@ -33,7 +33,7 @@ system state, except when you press `x` to send a signal after confirming.
 
 | Tab | Contents |
 | --- | --- |
-| **Overview** | What it is, why it's on your Mac, safe to quit?, vendor and code-signing identity, install location/source (app bundle, pkg, Homebrew), how launchd starts it, a trust check, command line, family tree |
+| **Overview** | What it is, why it's on your Mac, safe to quit?, vendor and code-signing identity, install location/source (app bundle, pkg, Homebrew package with its description, tap, homepage and package page), how launchd starts it, a trust check, command line, family tree |
 | **Files** | Working directory, open files, devices, pipes/sockets, third-party code loaded |
 | **Network** | Listening ports (and whether they're reachable beyond localhost), live connections with reverse-DNS names |
 
@@ -56,11 +56,17 @@ listening sockets). It is not an antivirus; each finding explains itself.
 `↑↓`/`jk` select · `tab`/`1-3` view · `J`/`K` scroll · `/` filter · `s` sort · `a` hide Apple/system ·
 `r` rescan selected · `f` reveal in Finder · `c` copy path · `w` web search · `q` quit
 
+## Finding gaps
+
+`pidwick --unknown` lists the running processes that have no built-in description (name, path, count)
+and exits. Handy for spotting what to add to `internal/proc/kb/`. For those processes the Overview tab
+also shows clues deduced from the framework, the name, the launchd job and the parent process.
+
 ## How it gathers data
 
 `ps`, `lsof`, `codesign`, `spctl`, `pkgutil`, `launchctl`, launchd plists,
 app `Info.plist`s and a built-in knowledge base of well-known macOS processes
-(`internal/proc/kb/*.json`, ~430 entries plus pattern rules for widgets, App Intents, Storage and DriverKit processes; entries marked `inferred` are deduced from the name and framework rather than documented).
+(`internal/proc/kb/*.json`, ~490 entries plus pattern rules for widgets, App Intents, Storage and DriverKit processes; entries marked `inferred` are deduced from the name and framework rather than documented).
 
 ## Limitations
 

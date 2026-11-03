@@ -114,6 +114,24 @@ var patterns = []pattern{
 }
 
 func init() {
+	patterns = append(patterns, pattern{regexp.MustCompile(`SELFIngestor$`), func(m []string) Entry {
+		e := appleGeneric("A SELF ingestor extension: it receives usage and diagnostic events from one Apple feature (Biome, Apple Intelligence and similar) and writes them to the system's on-device event store.",
+			"Started on demand by the system when that feature has new events to record.")
+		e.Inferred = true
+		return e
+	}})
+	patterns = append(patterns, pattern{regexp.MustCompile(`crashpad_handler$`), func(m []string) Entry {
+		return Entry{Vendor: "Google (Chromium)",
+			Summary: "Chromium's crash reporter, here named " + m[0] + ". Chrome and Chromium-based apps (Electron apps, Edge, Brave) launch one to collect crash dumps.",
+			Why:     "Starts with the app that uses Chromium.",
+			Quit:    "Ends with its app. Safe to ignore."}
+	}})
+	patterns = append(patterns, pattern{regexp.MustCompile(`\[mux\]$`), func(m []string) Entry {
+		return Entry{Vendor: "Apple (OpenSSH)",
+			Summary: "An SSH master connection that stays open in the background (ControlMaster) so later ssh, scp and git commands to the same host reuse it instead of logging in again.",
+			Why:     "Your ~/.ssh/config uses ControlMaster/ControlPersist, or someone ran ssh -M. It exits after the ControlPersist timeout.",
+			Quit:    "Safe. The next ssh to that host just opens a new connection; anything still using this one is dropped."}
+	}})
 	patterns = append(patterns, pattern{regexp.MustCompile(`^iTermServer-`), func(m []string) Entry {
 		return Entry{Vendor: "George Nachman (iTerm2)",
 			Summary: "iTerm2's session server. It owns your terminal sessions so they survive if iTerm2 itself quits or restarts.",
@@ -122,7 +140,9 @@ func init() {
 	}})
 }
 
-var helperRe = regexp.MustCompile(`^(.+?) Helper(?: \(([A-Za-z ]+)\))?$`)
+// Chromium apps name their children either "App Helper (Renderer)" or, in
+// newer Electron builds, "App (Renderer)".
+var helperRe = regexp.MustCompile(`^(.+?)(?: Helper(?: \(([A-Za-z ]+)\))?| \((Renderer|GPU|Plugin|Service|Utility)\))$`)
 
 // Lookup returns what Pidwick knows about a process by executable name.
 func Lookup(name string) (Entry, bool) {
@@ -135,7 +155,7 @@ func Lookup(name string) (Entry, bool) {
 		}
 	}
 	if m := helperRe.FindStringSubmatch(name); m != nil {
-		role := strings.ToLower(m[2])
+		role := strings.ToLower(m[2] + m[3])
 		what := "a helper process for"
 		switch role {
 		case "renderer":

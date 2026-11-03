@@ -137,12 +137,25 @@ func renderOverview(in *proc.Info, w int) string {
 			msg += " Specifically, it's the " + in.Role + "."
 		}
 		d.para(msg)
+	case in.Brew != nil && in.Brew.Desc != "":
+		msg := fmt.Sprintf("Not in Pidwick's built-in list, but it belongs to the Homebrew package %s, which Homebrew describes as: %s", in.Brew.Name, in.Brew.Desc)
+		d.para(msg)
 	default:
 		msg := fmt.Sprintf("“%s” isn't in Pidwick's built-in list of known processes.", p.Name)
 		if in.Role != "" {
 			msg += " It looks like a " + in.Role + "."
 		}
 		d.para(msg)
+	}
+
+	if in.KB == nil {
+		for _, c := range proc.Deduce(in) {
+			// the Apple-signed message already carries the framework clue
+			if in.Sign.Kind == proc.SignerApple && strings.HasPrefix(c, "It ships inside Apple's") {
+				continue
+			}
+			d.bullet(sDim.Render("•"), c)
+		}
 	}
 
 	// WHAT IT'S RUNNING (interpreted command line)
@@ -251,8 +264,28 @@ func renderOverview(in *proc.Info, w int) string {
 			}
 			d.kv("Installer", s)
 		}
-		if in.Brew != "" {
-			d.kv("Homebrew", in.Brew+"  (brew info "+in.Brew+")")
+		if b := in.Brew; b != nil {
+			kind, flag := "formula", ""
+			if b.Cask {
+				kind, flag = "cask", "--cask "
+			}
+			d.kv("Homebrew", joinNonEmpty(" ", sBold.Render(b.Name), b.Version, tapLabel(b.Tap))+"  (brew info "+flag+b.Name+")")
+			d.kv("Description", b.Desc)
+			d.kv("Homepage", b.Homepage)
+			d.kv("Page", b.PageURL)
+			d.kv("License", b.License)
+			how := "as a dependency of another " + kind
+			if b.OnRequest {
+				how = "by you (brew install " + flag + b.Name + ")"
+			}
+			if !b.Installed.IsZero() {
+				how += ", " + ago(b.Installed)
+			}
+			d.kv("Installed", how)
+			if len(b.Deps) > 0 {
+				d.kv("Needs", strings.Join(b.Deps, ", "))
+			}
+			d.kv("Keg", tilde(b.Keg))
 		}
 	}
 
@@ -314,13 +347,11 @@ func renderOverview(in *proc.Info, w int) string {
 	return d.b.String()
 }
 
-var frameworkRe = regexp.MustCompile(`/([A-Za-z0-9]+)\.framework/`)
-
 // frameworkHint gives a clue about an undocumented system process from the
 // framework that ships it.
 func frameworkHint(path string) string {
-	if m := frameworkRe.FindStringSubmatch(path); m != nil {
-		return " It ships inside Apple's " + m[1] + " framework, so it most likely supports that area of the system."
+	if fw := proc.Framework(path); fw != "" {
+		return " It ships inside Apple's " + fw + " framework, so it most likely supports that area of the system."
 	}
 	return ""
 }
@@ -436,8 +467,12 @@ func whyBullets(in *proc.Info) []string {
 	if in.Package != nil {
 		out = append(out, "Its file was installed by package "+in.Package.ID+".")
 	}
-	if in.Brew != "" {
-		out = append(out, "Installed by Homebrew (package: "+in.Brew+"), either by you or as a dependency of something you installed.")
+	if b := in.Brew; b != nil {
+		if b.OnRequest {
+			out = append(out, "You installed it with Homebrew (package: "+b.Name+").")
+		} else {
+			out = append(out, "Homebrew installed it (package: "+b.Name+"), most likely as a dependency of something you installed.")
+		}
 	}
 	if p.Kind == proc.KindUser && in.Bundle == nil {
 		out = append(out, "Runs from your home folder, so a tool or script you (or an installer) put there is responsible.")
@@ -458,6 +493,8 @@ func quitAdvice(in *proc.Info) string {
 		return "Don't just kill it: first note the path and who launched it, then quit it and remove the file and any launch job that restarts it (see 'How it starts')."
 	case in.Launch.Main != "" && in.KB == nil:
 		return fmt.Sprintf("Depends on what it runs (%s). If you started it from a terminal, press Ctrl-C there; otherwise check who owns it before killing.", in.Launch.Main)
+	case in.Brew != nil && !in.Brew.Cask && in.Job == nil:
+		return fmt.Sprintf("A tool installed by Homebrew (%s) that something started. If it is still doing work for a terminal or script, let that finish or press Ctrl-C there; otherwise it is safe to quit. `brew uninstall %s` removes it.", in.Brew.Name, in.Brew.Name)
 	case in.Job != nil && in.Job.KeepAlive:
 		return "launchd restarts it automatically, so quitting it won't stick. To stop it for good, uninstall the software or unload its launch job."
 	case p.Kind == proc.KindSystem:
@@ -619,4 +656,11 @@ func tabBar(active int, w int) string {
 		sep = " │ "
 	}
 	return ansi.Truncate(strings.Join(parts, sDim.Render(sep)), w, "…")
+}
+
+func tapLabel(tap string) string {
+	if tap == "" {
+		return ""
+	}
+	return "(tap " + tap + ")"
 }
