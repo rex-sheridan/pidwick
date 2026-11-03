@@ -81,6 +81,9 @@ func TestDragSelectsAndCopies(t *testing.T) {
 	if row < 0 {
 		t.Fatal("no Path row in overview")
 	}
+	// long overviews (a java command line) push this row below the fold
+	m.detail.SetYOffset(max(0, row-3))
+	tm = m
 	y := detailTop + row - m.detail.YOffset
 	tm = click(tm, x+12, y) // start of the value column
 	tm = drag(tm, x+20, y)
@@ -111,6 +114,8 @@ func TestDoubleClickSelectsWord(t *testing.T) {
 			row = i
 		}
 	}
+	m.detail.SetYOffset(max(0, row-3)) // a long overview can push this row below the fold
+	tm = m
 	y := detailTop + row - m.detail.YOffset
 	x := m.detailX() + 14
 	for i := 0; i < 2; i++ {
@@ -298,5 +303,102 @@ func TestClickDeadLinkFlashes(t *testing.T) {
 	tm, _ := m.gotoPID(-12345)
 	if !strings.Contains(tm.(Model).flash, "exited") {
 		t.Fatalf("flash = %q", tm.(Model).flash)
+	}
+}
+
+func fakeProcs() []proc.Process {
+	mk := func(pid int, name string, cpu float64) proc.Process {
+		return proc.Process{PID: pid, PPID: 1, User: "rex", Name: name, Path: "/usr/bin/" + name, CPU: cpu, RSSKB: 1000, Kind: proc.KindSystem}
+	}
+	return []proc.Process{mk(901, "alpha", 9), mk(902, "bravo", 5), mk(903, "charlie", 1)}
+}
+
+func fakeModel() tea.Model {
+	var tm tea.Model = New()
+	tm, _ = tm.Update(tea.WindowSizeMsg{Width: 120, Height: 40})
+	tm, _ = tm.Update(procsMsg{fakeProcs()})
+	return tm
+}
+
+func TestEndedProcessStaysSelected(t *testing.T) {
+	tm := fakeModel()
+	tm, _ = tm.Update(tea.KeyMsg{Type: tea.KeyDown}) // bravo (902)
+	if p, _ := tm.(Model).selected(); p.PID != 902 {
+		t.Fatalf("selected %d, want 902", p.PID)
+	}
+	// bravo exits
+	var rest []proc.Process
+	for _, p := range fakeProcs() {
+		if p.PID != 902 {
+			rest = append(rest, p)
+		}
+	}
+	tm, _ = tm.Update(procsMsg{rest})
+	m := tm.(Model)
+	if p, _ := m.selected(); p.PID != 902 {
+		t.Fatalf("view jumped to %d after the process ended", p.PID)
+	}
+	out := ansi.Strip(tm.View())
+	if !strings.Contains(out, "ENDED") || !strings.Contains(out, "✗ bravo") {
+		t.Fatalf("no ended indicator in:\n%s", out)
+	}
+	// it survives further refreshes
+	tm, _ = tm.Update(procsMsg{rest})
+	if p, _ := tm.(Model).selected(); p.PID != 902 {
+		t.Fatalf("lost the ended process on the next refresh: %d", p.PID)
+	}
+
+	// signals must never go to an ended PID (it may have been reused)
+	tm, _ = tm.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune("x")})
+	if tm.(Model).kill != nil {
+		t.Fatal("kill prompt opened for an ended process")
+	}
+
+	// moving away drops it for good
+	tm, _ = tm.Update(tea.KeyMsg{Type: tea.KeyDown})
+	tm, _ = tm.Update(procsMsg{rest})
+	for _, p := range tm.(Model).view {
+		if p.PID == 902 {
+			t.Fatal("ended process still listed after selecting another")
+		}
+	}
+	if tm.(Model).ghost != nil {
+		t.Fatal("ghost not cleared")
+	}
+}
+
+func TestUnselectedExitDoesNotLeaveGhost(t *testing.T) {
+	tm := fakeModel() // alpha selected
+	var rest []proc.Process
+	for _, p := range fakeProcs() {
+		if p.PID != 903 {
+			rest = append(rest, p)
+		}
+	}
+	tm, _ = tm.Update(procsMsg{rest})
+	if tm.(Model).ghost != nil {
+		t.Fatal("a process that wasn't selected became a ghost")
+	}
+}
+
+func TestEndedPIDReusedDropsGhost(t *testing.T) {
+	tm := fakeModel()
+	tm, _ = tm.Update(tea.KeyMsg{Type: tea.KeyDown})
+	gone := []proc.Process{fakeProcs()[0], fakeProcs()[2]}
+	tm, _ = tm.Update(procsMsg{gone})
+	reused := append(gone, proc.Process{PID: 902, PPID: 1, Name: "newcomer", Path: "/usr/bin/newcomer", Kind: proc.KindSystem})
+	tm, _ = tm.Update(procsMsg{reused})
+	m := tm.(Model)
+	if m.ghost != nil {
+		t.Fatal("ghost kept although its PID is live again")
+	}
+	n := 0
+	for _, p := range m.view {
+		if p.PID == 902 {
+			n++
+		}
+	}
+	if n != 1 {
+		t.Fatalf("PID 902 listed %d times", n)
 	}
 }

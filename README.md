@@ -48,6 +48,7 @@ listening sockets). It is not an antivirus; each finding explains itself.
   (paths and IDs stay whole), **triple-click** a line. Releasing copies to the clipboard.
   Pidwick implements this itself because terminals stop selecting once an app captures the mouse.
   `m` releases the mouse so your terminal's own selection works (press `m` again to restore clicking).
+- If the process you're viewing exits, its details stay on screen marked **ENDED** (and `✗` in the list) instead of jumping to another process. Select something else to dismiss it. Kill and rescan are disabled for it, since its PID may already belong to someone else.
 - `y` copies the whole current view.
 - **Kill** with `x`: a confirmation offers `t` terminate (SIGTERM), `k` force kill (SIGKILL), or `a`
   terminate the process and all its descendants. It warns about system components, launchd

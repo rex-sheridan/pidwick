@@ -64,6 +64,13 @@ type cached struct {
 	at   time.Time
 }
 
+// ended is a selected process that has exited. It stays in the list and the
+// detail pane, marked as ended, until the selection moves elsewhere.
+type ended struct {
+	p  proc.Process
+	at time.Time
+}
+
 type Model struct {
 	width, height int
 
@@ -96,6 +103,7 @@ type Model struct {
 		x, y  int
 		count int
 	}
+	ghost       *ended
 	nativeMouse bool // mouse released so the terminal can select text itself
 	kill        *killPrompt
 }
@@ -132,6 +140,35 @@ func (m Model) selected() (proc.Process, bool) {
 		return proc.Process{}, false
 	}
 	return m.view[m.cursor], true
+}
+
+// keepEnded makes the selected process outlive its exit. If it has vanished
+// from the latest scan it is kept as a ghost (frozen) so the
+// view doesn't jump to another process (its last CPU value is kept so it
+// holds its place in the sort, but the list shows "gone"); the ghost is dropped once the PID is
+// live again or the selection moves.
+func (m *Model) keepEnded(prev proc.Process, hadSel bool) {
+	live := func(pid int) bool {
+		for _, p := range m.all {
+			if p.PID == pid {
+				return true
+			}
+		}
+		return false
+	}
+	if m.ghost != nil && live(m.ghost.p.PID) {
+		m.ghost = nil // PID reused by a new process
+	}
+	if m.ghost == nil && hadSel && !live(prev.PID) {
+		m.ghost = &ended{p: prev, at: time.Now()}
+	}
+	if m.ghost != nil {
+		m.all = append(m.all[:len(m.all):len(m.all)], m.ghost.p)
+	}
+}
+
+func (m Model) isEnded(p proc.Process) bool {
+	return m.ghost != nil && p.PID == m.ghost.p.PID
 }
 
 // rebuild recomputes the filtered, sorted view while keeping the same process selected.
@@ -222,6 +259,9 @@ func (m Model) rightWidth() int { return max(20, m.width-m.leftWidth()-3) }
 func (m *Model) onSelect() tea.Cmd {
 	m.seq++
 	seq := m.seq
+	if p, ok := m.selected(); m.ghost != nil && (!ok || !m.isEnded(p)) {
+		m.ghost = nil
+	}
 	m.detail.GotoTop()
 	m.showCurrent()
 	return tea.Tick(150*time.Millisecond, func(time.Time) tea.Msg { return debounceMsg{seq} })
@@ -289,6 +329,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		firstLoad := len(m.all) == 0
 		prev, hadSel := m.selected()
 		m.all = msg.procs
+		m.keepEnded(prev, hadSel && !firstLoad)
 		m.rebuild()
 		if cur, ok := m.selected(); firstLoad || !hadSel || (ok && cur.PID != prev.PID) {
 			return m, m.onSelect()
@@ -306,8 +347,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if !ok {
 			return m, nil
 		}
-		if c, ok := m.cache[p.Key()]; ok && time.Since(c.at) < 8*time.Second {
-			return m, nil
+		if c, ok := m.cache[p.Key()]; ok && (time.Since(c.at) < 8*time.Second || m.isEnded(p)) {
+			return m, nil // fresh enough, or the process is gone so there is nothing new to learn
 		}
 		m.loading = p.Key()
 		return m, inspect(p, m.all)
@@ -437,14 +478,19 @@ func (m Model) handleKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		m.rebuild()
 		return m, m.onSelect()
 	case "r":
-		if p, ok := m.selected(); ok {
+		if p, ok := m.selected(); ok && m.isEnded(p) {
+			return m, m.setFlash(p.Name + " has ended; nothing left to rescan")
+		} else if ok {
 			delete(m.cache, p.Key())
 			m.loading = p.Key()
 			m.showCurrent()
 			return m, inspect(p, m.all)
 		}
 	case "x", "delete":
-		if p, ok := m.selected(); ok {
+		if p, ok := m.selected(); ok && m.isEnded(p) {
+			// its PID may already belong to another process, so never signal it
+			return m, m.setFlash(p.Name + " has already ended")
+		} else if ok {
 			var in *proc.Info
 			if c, ok := m.cache[p.Key()]; ok {
 				in = c.info
@@ -570,9 +616,20 @@ func (m Model) renderList(w int) string {
 		if p.Detail != "" {
 			label += " ▸ " + p.Detail
 		}
+		gone := m.isEnded(p)
+		if gone {
+			label = "✗ " + label
+		}
 		name := ansi.Truncate(label, w-24, "…")
 		tag := kindStyle(p.Kind).Render(p.Kind.Tag())
-		row := fmt.Sprintf("%s %-*s %6d %5.1f %6s", tag, w-24, name, p.PID, p.CPU, humanKB(p.RSSKB))
+		cpu := fmt.Sprintf("%5.1f", p.CPU)
+		if gone {
+			cpu = " gone"
+		}
+		row := fmt.Sprintf("%s %-*s %6d %s %6s", tag, w-24, name, p.PID, cpu, humanKB(p.RSSKB))
+		if gone && i != m.cursor {
+			row = sDim.Render(ansi.Strip(row))
+		}
 		if i == m.cursor {
 			row = lipgloss.NewStyle().Background(cSelBg).Bold(true).Width(w).Render(row)
 		}
@@ -604,7 +661,12 @@ func (m Model) renderDetail(w int) string {
 	}
 	title := ""
 	meta := sDim.Render(fmt.Sprintf("PID %d · %s · up %s · CPU %.1f%% · %s", p.PID, p.User, humanDur(p.Age), p.CPU, humanKB(p.RSSKB)))
-	if c, ok := m.cache[p.Key()]; ok {
+	if m.isEnded(p) {
+		meta = sDim.Render(fmt.Sprintf("PID %d · %s · ran for %s · last memory %s", p.PID, p.User, humanDur(p.Age), humanKB(p.RSSKB)))
+	}
+	if m.isEnded(p) {
+		title = sBold.Render(p.Name) + "  " + sBad.Bold(true).Render("✗ ENDED "+humanDur(time.Since(m.ghost.at))+" ago") + sDim.Render("  (details below are from before it exited)")
+	} else if c, ok := m.cache[p.Key()]; ok {
 		title = sBold.Render(p.Name) + "  " + lipgloss.NewStyle().Foreground(levelColor(c.info.Verdict.Level)).Bold(true).Render("● "+c.info.Verdict.Level.String())
 	} else {
 		title = sBold.Render(p.Name) + "  " + sDim.Render("inspecting…")
