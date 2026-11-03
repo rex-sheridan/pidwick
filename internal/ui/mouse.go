@@ -66,8 +66,44 @@ func (m Model) handleMouse(msg tea.MouseMsg) (tea.Model, tea.Cmd) {
 			return m, m.copyText(txt, "")
 		}
 		m.sel = selection{}
+		// a click that selected nothing on a family-tree line opens that process
+		if pid, ok := m.links[m.detailPos(msg.X, msg.Y).line]; ok && m.inDetail(msg.X, msg.Y) && m.lastClk.count == 1 {
+			return m.gotoPID(pid)
+		}
 	}
 	return m, nil
+}
+
+// gotoPID selects the process with the given PID, clearing the filter and the
+// system-process toggle if they are hiding it.
+func (m Model) gotoPID(pid int) (tea.Model, tea.Cmd) {
+	find := func() int {
+		for i, p := range m.view {
+			if p.PID == pid {
+				return i
+			}
+		}
+		return -1
+	}
+	idx := find()
+	if idx < 0 {
+		exists := false
+		for _, p := range m.all {
+			exists = exists || p.PID == pid
+		}
+		if !exists {
+			return m, m.setFlash(fmt.Sprintf("Process %d has exited", pid))
+		}
+		m.filter.SetValue("")
+		m.hideApple = false
+		m.rebuild()
+		if idx = find(); idx < 0 {
+			return m, nil
+		}
+	}
+	m.cursor = idx
+	m.clamp()
+	return m, m.onSelect()
 }
 
 func (m Model) mouseDown(msg tea.MouseMsg) (tea.Model, tea.Cmd) {

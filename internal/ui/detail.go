@@ -16,8 +16,18 @@ import (
 )
 
 type detailBuilder struct {
-	w int
-	b strings.Builder
+	w     int
+	b     strings.Builder
+	links map[int]int // content line -> PID, for lines that navigate when clicked
+}
+
+// linkLine writes a line that jumps to process pid when clicked.
+func (d *detailBuilder) linkLine(s string, pid int) {
+	if d.links == nil {
+		d.links = map[int]int{}
+	}
+	d.links[strings.Count(d.b.String(), "\n")] = pid
+	d.line(s)
 }
 
 func (d *detailBuilder) section(title string) {
@@ -113,7 +123,8 @@ func procLabel(p proc.Process) string {
 	return fmt.Sprintf("%s (%d)", p.Name, p.PID)
 }
 
-func renderOverview(in *proc.Info, w int) string {
+// renderOverview returns the Overview text and the clickable lines in it.
+func renderOverview(in *proc.Info, w int) (string, map[int]int) {
 	d := &detailBuilder{w: w}
 	p := in.Proc
 	v := in.Verdict
@@ -331,8 +342,9 @@ func renderOverview(in *proc.Info, w int) string {
 
 	// FAMILY
 	d.section("Family tree")
+	link := sDim.Underline(true)
 	for i, a := range in.Lineage {
-		d.line(strings.Repeat("  ", i) + sDim.Render(procLabel(a)))
+		d.linkLine(strings.Repeat("  ", i)+link.Render(procLabel(a)), a.PID)
 	}
 	d.line(strings.Repeat("  ", len(in.Lineage)) + sAccent.Render("▸ "+procLabel(p)))
 	kids := in.Children
@@ -342,9 +354,9 @@ func renderOverview(in *proc.Info, w int) string {
 			d.line(strings.Repeat("  ", len(in.Lineage)+1) + sDim.Render(fmt.Sprintf("… and %d more children", len(kids)-12)))
 			break
 		}
-		d.line(strings.Repeat("  ", len(in.Lineage)+1) + sDim.Render("└ "+procLabel(c)))
+		d.linkLine(strings.Repeat("  ", len(in.Lineage)+1)+sDim.Render("└ ")+link.Render(procLabel(c)), c.PID)
 	}
-	return d.b.String()
+	return d.b.String(), d.links
 }
 
 // frameworkHint gives a clue about an undocumented system process from the

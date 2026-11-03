@@ -86,8 +86,9 @@ type Model struct {
 	flashSeq int
 	err      error
 
-	lines    []string // detail content, raw ANSI, one entry per row
-	plain    []string // same, ANSI-stripped and right-trimmed (for copying)
+	lines    []string    // detail content, raw ANSI, one entry per row
+	plain    []string    // same, ANSI-stripped and right-trimmed (for copying)
+	links    map[int]int // detail line -> PID of the process a click on it opens
 	sel      selection
 	dragging bool
 	lastClk  struct {
@@ -227,6 +228,7 @@ func (m *Model) onSelect() tea.Cmd {
 }
 
 func (m *Model) setContent(s string) {
+	m.links = nil
 	if strings.Join(m.lines, "\n") != s {
 		m.sel = selection{}
 	}
@@ -245,19 +247,21 @@ func (m *Model) showCurrent() {
 		return
 	}
 	if c, ok := m.cache[p.Key()]; ok {
-		m.setContent(m.renderTab(c.info))
+		text, links := m.renderTab(c.info)
+		m.setContent(text)
+		m.links = links
 		return
 	}
 	m.setContent(sDim.Render(ansi.Truncate("Inspecting "+p.Name+"…", max(m.detail.Width, 10), "…")))
 }
 
-func (m Model) renderTab(in *proc.Info) string {
+func (m Model) renderTab(in *proc.Info) (string, map[int]int) {
 	w := m.detail.Width
 	switch m.tab {
 	case tabFiles:
-		return renderFiles(in, w)
+		return renderFiles(in, w), nil
 	case tabNetwork:
-		return renderNetwork(in, w)
+		return renderNetwork(in, w), nil
 	}
 	return renderOverview(in, w)
 }

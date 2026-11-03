@@ -243,3 +243,60 @@ func TestIsCodeFile(t *testing.T) {
 		}
 	}
 }
+
+func TestClickFamilyTreeNavigates(t *testing.T) {
+	// pick a process that has a parent so the tree has a clickable ancestor
+	m := loaded(t, 140, 50)
+	var tm tea.Model = m
+	var parentPID int
+	for i, p := range m.view {
+		if p.PPID > 1 {
+			for _, q := range m.view {
+				if q.PID == p.PPID {
+					parentPID = q.PID
+					m.cursor = i
+				}
+			}
+		}
+		if parentPID != 0 {
+			break
+		}
+	}
+	if parentPID == 0 {
+		t.Skip("no process with a visible non-launchd parent")
+	}
+	tm = m
+	cur, _ := tm.(Model).selected()
+	tm, _ = tm.Update(inspectMsg{cur.Key(), proc.Inspect(context.Background(), cur, m.all)})
+	mm := tm.(Model)
+	line := -1
+	for l, pid := range mm.links {
+		if pid == parentPID {
+			line = l
+		}
+	}
+	if line < 0 {
+		t.Fatalf("no link to parent %d in %v", parentPID, mm.links)
+	}
+	mm.detail.SetYOffset(max(0, line-2)) // scroll the tree into view
+	tm = mm
+	y := detailTop + line - mm.detail.YOffset
+	if y >= detailTop+mm.detail.Height {
+		t.Skip("family tree can't be scrolled into view at this size")
+	}
+	x := mm.detailX() + 2
+	tm = click(tm, x, y)
+	tm = release(tm, x, y)
+	got, _ := tm.(Model).selected()
+	if got.PID != parentPID {
+		t.Fatalf("clicked parent %d but selected %d", parentPID, got.PID)
+	}
+}
+
+func TestClickDeadLinkFlashes(t *testing.T) {
+	m := loaded(t, 120, 40)
+	tm, _ := m.gotoPID(-12345)
+	if !strings.Contains(tm.(Model).flash, "exited") {
+		t.Fatalf("flash = %q", tm.(Model).flash)
+	}
+}

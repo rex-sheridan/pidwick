@@ -43,7 +43,7 @@ listening sockets). It is not an antivirus; each finding explains itself.
 
 ## Mouse and keyboard
 
-- **Click** a process to select it; click a tab to switch; click the filter row to search; wheel scrolls.
+- **Click** a process to select it; click a name in the Overview's family tree to jump to that process; click a tab to switch; click the filter row to search; wheel scrolls.
 - **Select text** in the detail pane by dragging; **double-click** selects a word
   (paths and IDs stay whole), **triple-click** a line. Releasing copies to the clipboard.
   Pidwick implements this itself because terminals stop selecting once an app captures the mouse.
