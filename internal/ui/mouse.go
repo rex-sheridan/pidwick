@@ -166,10 +166,10 @@ func (m Model) tabAt(x int) int {
 		sepW = 3
 	}
 	start := 0
-	for i, n := range tabNames {
-		end := start + len(n)
+	for _, t := range m.visibleTabs() {
+		end := start + len(tabLabels[t])
 		if x >= start && x < end+sepW/2 {
-			return i
+			return t
 		}
 		start = end + sepW
 	}
