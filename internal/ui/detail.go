@@ -651,13 +651,14 @@ func renderNetwork(in *proc.Info, w int) string {
 	return d.b.String()
 }
 
-var tabNames = []string{"1 Overview", "2 Files", "3 Network"}
+// tabLabels names every tab; the number is the key that opens it.
+var tabLabels = map[int]string{tabOverview: "1 Overview", tabFiles: "2 Files", tabNetwork: "3 Network", tabJVM: "4 JVM"}
 
-func tabBar(active int, w int) string {
-	names := tabNames
+func tabBar(tabs []int, active int, w int) string {
 	var parts []string
-	for i, n := range names {
-		if i == active {
+	for _, t := range tabs {
+		n := tabLabels[t]
+		if t == active {
 			parts = append(parts, lipgloss.NewStyle().Bold(true).Foreground(cAccent).Underline(true).Render(n))
 		} else {
 			parts = append(parts, sDim.Render(n))
@@ -675,4 +676,121 @@ func tapLabel(tap string) string {
 		return ""
 	}
 	return "(tap " + tap + ")"
+}
+
+// renderJVM shows live data from the JDK tools for a Java process.
+func renderJVM(in *proc.Info, j *proc.JVM, busy bool, w int) string {
+	d := &detailBuilder{w: w}
+	if !proc.IsJava(in.Launch) {
+		d.para(sDim.Render("Not a Java process, so there is nothing for the JDK tools (jcmd, jstat) to show."))
+		return d.b.String()
+	}
+	if j == nil {
+		if busy {
+			d.para(sDim.Render("Attaching with jcmd…"))
+		} else {
+			d.para(sDim.Render("Waiting to attach…"))
+		}
+		return d.b.String()
+	}
+	if j.Err != "" {
+		d.section("Couldn't attach")
+		d.para(sWarn.Render(j.Err))
+		d.line("")
+		d.line(sDim.Render("r tries again."))
+		return d.b.String()
+	}
+
+	d.section("Runtime")
+	d.kv("JDK", j.Version)
+	d.kv("VM", j.VMName)
+	if cv := proc.ClojureVersion(in.Launch.Classpath); cv != "" {
+		d.kv("Clojure", cv)
+	}
+	if j.Uptime > 0 {
+		d.kv("JVM uptime", humanDur(j.Uptime))
+	}
+	d.kv("Tools", tilde(j.Tool))
+
+	d.section("Memory")
+	if j.HeapCommKB > 0 {
+		used := humanKB(j.HeapUsedKB)
+		line := fmt.Sprintf("%s used of %s committed", used, humanKB(j.HeapCommKB))
+		if j.HeapMaxKB > 0 {
+			pct := float64(j.HeapUsedKB) / float64(j.HeapMaxKB) * 100
+			line += fmt.Sprintf(", max %s (%.0f%% of max)", humanKB(j.HeapMaxKB), pct)
+			if pct >= 85 {
+				line += "  " + sWarn.Render("heap nearly full")
+			}
+		}
+		d.kv("Heap", line)
+	} else {
+		d.kv("Heap", "not reported")
+	}
+	d.kv("GC", j.GC)
+	if c := j.Collections; c != nil {
+		line := fmt.Sprintf("young %s (%ss)", c["YGC"], c["YGCT"])
+		if c["FGC"] != "" {
+			line += fmt.Sprintf(", full %s (%ss)", c["FGC"], c["FGCT"])
+		}
+		if c["CGC"] != "" {
+			line += fmt.Sprintf(", concurrent %s", c["CGC"])
+		}
+		d.kv("Collections", line)
+		if j.Uptime > 0 && j.GCTime > 0 {
+			pct := float64(j.GCTime) / float64(j.Uptime) * 100
+			s := fmt.Sprintf("%.1f%% of uptime in GC (%s)", pct, j.GCTime.Round(time.Millisecond))
+			if pct >= 10 {
+				s += "  " + sWarn.Render("GC is busy")
+			}
+			d.kv("GC time", s)
+		}
+	}
+
+	d.section(fmt.Sprintf("Threads (%d)", j.Threads))
+	if j.Deadlock != "" {
+		d.para(sBad.Bold(true).Render("DEADLOCK ") + j.Deadlock)
+	}
+	if len(j.ThreadStates) > 0 {
+		var states []string
+		for _, s := range []string{"RUNNABLE", "BLOCKED", "WAITING", "TIMED_WAITING", "NEW", "TERMINATED"} {
+			if n := j.ThreadStates[s]; n > 0 {
+				states = append(states, fmt.Sprintf("%d %s", n, strings.ToLower(s)))
+			}
+		}
+		d.kv("States", strings.Join(states, ", ")+" (Java threads; the JVM's own are not counted)")
+	}
+	for i, g := range j.ThreadGroups {
+		if i >= 8 {
+			d.line(sDim.Render(fmt.Sprintf("  … and %d more groups", len(j.ThreadGroups)-i)))
+			break
+		}
+		d.line(ansi.Truncate(fmt.Sprintf("  %3d  %s", g.Count, g.Name), w, "…"))
+	}
+
+	d.section("REPL, debugger and JMX ports")
+	if len(j.Endpoints) == 0 {
+		d.line(sDim.Render("None found (no .nrepl-port file, socket REPL, JDWP or JMX flags)."))
+	}
+	for _, e := range j.Endpoints {
+		state := sDim.Render("not listening")
+		if e.Open {
+			state = sGood.Render(e.Where)
+			if e.Where != "localhost only" {
+				state = sWarn.Render(e.Where)
+			}
+		}
+		d.line(fmt.Sprintf("%s :%s  %s", sBold.Render(e.Kind), e.Port, state))
+		d.line("    " + sDim.Render("from "+e.Via))
+	}
+
+	if len(j.Flags) > 0 {
+		d.line("")
+		d.line(sDim.Render(fmt.Sprintf("%d JVM flags are in effect, mostly chosen by the JVM; list them with jcmd %d VM.flags.", len(j.Flags), in.Proc.PID)))
+	}
+
+	d.line("")
+	d.line(sBold.Render("d") + sDim.Render(" thread dump   ") + sBold.Render("i") + sDim.Render(" class histogram (pauses the JVM)   ") + sBold.Render("g") + sDim.Render(" force GC (pauses the JVM)"))
+	d.line(sDim.Render(fmt.Sprintf("Read with jcmd and jstat %s ago (r refreshes). Attaching briefly pauses the JVM for the thread dump.", humanDur(time.Since(j.Gathered)))))
+	return d.b.String()
 }

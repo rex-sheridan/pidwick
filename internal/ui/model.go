@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/url"
 	"os/exec"
+	"path/filepath"
 	"sort"
 	"strings"
 	"time"
@@ -37,7 +38,7 @@ const (
 	tabOverview = iota
 	tabFiles
 	tabNetwork
-	tabCount
+	tabJVM
 )
 
 // Screen layout (rows/cols) used to map mouse coordinates.
@@ -57,7 +58,16 @@ type (
 		info *proc.Info
 	}
 	flashMsg struct{ seq int }
+	jvmMsg   struct {
+		key string
+		jvm *proc.JVM
+	}
 )
+
+type cachedJVM struct {
+	jvm *proc.JVM
+	at  time.Time
+}
 
 type cached struct {
 	info *proc.Info
@@ -87,7 +97,11 @@ type Model struct {
 	tab      int
 	detail   viewport.Model
 	cache    map[string]cached
-	loading  string // key being inspected
+	jvm      map[string]cachedJVM // live JDK-tool data, fetched when the JVM tab is open
+	jvmBusy  string               // key being attached to
+	pane     jvmPane              // thread dump / histogram on the JVM tab
+	ask      *jvmAsk              // pending confirmation (histogram, GC)
+	loading  string               // key being inspected
 	seq      int
 	flash    string
 	flashSeq int
@@ -117,6 +131,7 @@ func New() Model {
 		filter: ti,
 		detail: viewport.New(10, 10),
 		cache:  map[string]cached{},
+		jvm:    map[string]cachedJVM{},
 	}
 }
 
@@ -262,6 +277,9 @@ func (m *Model) onSelect() tea.Cmd {
 	if p, ok := m.selected(); m.ghost != nil && (!ok || !m.isEnded(p)) {
 		m.ghost = nil
 	}
+	if p, ok := m.selected(); !ok || m.pane.key != p.Key() {
+		m.pane = jvmPane{}
+	}
 	m.detail.GotoTop()
 	m.showCurrent()
 	return tea.Tick(150*time.Millisecond, func(time.Time) tea.Msg { return debounceMsg{seq} })
@@ -281,6 +299,9 @@ func (m *Model) setContent(s string) {
 }
 
 func (m *Model) showCurrent() {
+	if m.tab == tabJVM && !m.tabVisible(tabJVM) {
+		m.tab = tabOverview
+	}
 	p, ok := m.selected()
 	if !ok {
 		m.setContent("")
@@ -302,8 +323,42 @@ func (m Model) renderTab(in *proc.Info) (string, map[int]int) {
 		return renderFiles(in, w), nil
 	case tabNetwork:
 		return renderNetwork(in, w), nil
+	case tabJVM:
+		k := in.Proc.Key()
+		if m.pane.key == k && m.pane.mode != jvmSummary {
+			return renderJVMPane(in, m.pane, w), nil
+		}
+		return renderJVM(in, m.jvm[k].jvm, m.jvmBusy == k, w), nil
 	}
 	return renderOverview(in, w)
+}
+
+// ensureJVM attaches to the selected process with the JDK tools when the JVM
+// tab is showing a Java process whose data is missing or stale. Browsing other
+// tabs never attaches to anything.
+func (m *Model) ensureJVM(force bool) tea.Cmd {
+	if m.tab != tabJVM {
+		return nil
+	}
+	p, ok := m.selected()
+	if !ok || m.isEnded(p) {
+		return nil
+	}
+	c, ok := m.cache[p.Key()]
+	if !ok || !proc.IsJava(c.info.Launch) || m.jvmBusy == p.Key() {
+		return nil
+	}
+	if j, ok := m.jvm[p.Key()]; ok && !force && time.Since(j.at) < 10*time.Second {
+		return nil
+	}
+	m.jvmBusy = p.Key()
+	m.showCurrent()
+	info := c.info
+	return func() tea.Msg {
+		ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+		defer cancel()
+		return jvmMsg{p.Key(), proc.InspectJVM(ctx, p, info.Launch, info.Handles, info.Cwd)}
+	}
 }
 
 func inspect(p proc.Process, all []proc.Process) tea.Cmd {
@@ -348,7 +403,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 		}
 		if c, ok := m.cache[p.Key()]; ok && (time.Since(c.at) < 8*time.Second || m.isEnded(p)) {
-			return m, nil // fresh enough, or the process is gone so there is nothing new to learn
+			return m, m.ensureJVM(false) // fresh enough, or the process is gone so there is nothing new to learn
 		}
 		m.loading = p.Key()
 		return m, inspect(p, m.all)
@@ -357,6 +412,34 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.cache[msg.key] = cached{msg.info, time.Now()}
 		if m.loading == msg.key {
 			m.loading = ""
+		}
+		if p, ok := m.selected(); ok && p.Key() == msg.key {
+			y := m.detail.YOffset
+			m.showCurrent()
+			m.detail.SetYOffset(y)
+		}
+		return m, m.ensureJVM(false)
+
+	case jvmOutMsg:
+		m.applyJVMOut(msg)
+		if p, ok := m.selected(); ok && p.Key() == msg.key {
+			y := m.detail.YOffset
+			m.showCurrent()
+			m.detail.SetYOffset(y)
+		}
+		return m, nil
+
+	case jvmGCMsg:
+		if msg.err != nil {
+			return m, m.setFlash("GC failed: " + msg.err.Error())
+		}
+		delete(m.jvm, msg.key)
+		return m, tea.Batch(m.setFlash(fmt.Sprintf("Full GC done: heap %s → %s", humanKB(msg.before), humanKB(msg.after))), m.ensureJVM(true))
+
+	case jvmMsg:
+		m.jvm[msg.key] = cachedJVM{msg.jvm, time.Now()}
+		if m.jvmBusy == msg.key {
+			m.jvmBusy = ""
 		}
 		if p, ok := m.selected(); ok && p.Key() == msg.key {
 			y := m.detail.YOffset
@@ -408,6 +491,9 @@ func (m Model) handleKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	if m.kill != nil {
 		return m.handleKillKey(msg)
 	}
+	if m.ask != nil {
+		return m.handleAskKey(msg)
+	}
 	if m.filtering {
 		switch msg.String() {
 		case "enter":
@@ -431,6 +517,10 @@ func (m Model) handleKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		return m, tea.Batch(cmd, m.onSelect())
 	}
 
+	if mm, cmd, ok := m.jvmKey(msg.String()); ok {
+		return mm, cmd
+	}
+
 	switch msg.String() {
 	case "ctrl+c", "q":
 		return m, tea.Quit
@@ -451,15 +541,19 @@ func (m Model) handleKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	case "J", "ctrl+d":
 		m.detail.HalfViewDown()
 	case "tab", "l", "right":
-		return m.setTab((m.tab + 1) % tabCount)
+		return m.setTab(m.nextTab(1))
 	case "shift+tab", "h", "left":
-		return m.setTab((m.tab + tabCount - 1) % tabCount)
+		return m.setTab(m.nextTab(-1))
 	case "1":
 		return m.setTab(tabOverview)
 	case "2":
 		return m.setTab(tabFiles)
 	case "3":
 		return m.setTab(tabNetwork)
+	case "4":
+		if m.tabVisible(tabJVM) {
+			return m.setTab(tabJVM)
+		}
 	case "/":
 		m.filtering = true
 		m.filter.Focus()
@@ -482,6 +576,7 @@ func (m Model) handleKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			return m, m.setFlash(p.Name + " has ended; nothing left to rescan")
 		} else if ok {
 			delete(m.cache, p.Key())
+			delete(m.jvm, p.Key())
 			m.loading = p.Key()
 			m.showCurrent()
 			return m, inspect(p, m.all)
@@ -526,13 +621,60 @@ func (m Model) handleKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	return m, nil
 }
 
+// visibleTabs lists the tabs that apply to the selected process: the JVM tab
+// exists only for Java processes.
+func (m Model) visibleTabs() []int {
+	tabs := []int{tabOverview, tabFiles, tabNetwork}
+	if m.selectedIsJava() {
+		tabs = append(tabs, tabJVM)
+	}
+	return tabs
+}
+
+func (m Model) tabVisible(t int) bool {
+	for _, v := range m.visibleTabs() {
+		if v == t {
+			return true
+		}
+	}
+	return false
+}
+
+// nextTab steps through the visible tabs, wrapping around.
+func (m Model) nextTab(dir int) int {
+	tabs := m.visibleTabs()
+	for i, t := range tabs {
+		if t == m.tab {
+			return tabs[(i+dir+len(tabs))%len(tabs)]
+		}
+	}
+	return tabOverview
+}
+
+// selectedIsJava uses the inspected command line when we have it, and the
+// executable's name until then, so the tab doesn't flicker while loading.
+func (m Model) selectedIsJava() bool {
+	p, ok := m.selected()
+	if !ok {
+		return false
+	}
+	if c, ok := m.cache[p.Key()]; ok {
+		return proc.IsJava(c.info.Launch)
+	}
+	switch filepath.Base(p.Path) {
+	case "java", "javaw":
+		return true
+	}
+	return false
+}
+
 func (m Model) setTab(t int) (tea.Model, tea.Cmd) {
 	m.tab = t
 	y := 0
 	m.detail.GotoTop()
 	m.showCurrent()
 	m.detail.SetYOffset(y)
-	return m, nil
+	return m, m.ensureJVM(false)
 }
 
 // ---- view ----
@@ -566,12 +708,18 @@ func (m Model) View() string {
 	if m.kill != nil {
 		out = overlay(out, m.kill.view(m.width), m.width, m.height)
 	}
+	if m.ask != nil {
+		out = overlay(out, m.ask.view(m.width), m.width, m.height)
+	}
 	return out
 }
 
 func (m Model) footer() string {
 	if m.kill != nil {
 		return sBad.Render("t terminate · k force kill · esc cancel")
+	}
+	if m.ask != nil {
+		return sWarn.Render("y go ahead · esc cancel")
 	}
 	// Hints are dropped right-to-left in this priority order when space is short.
 	hints := []struct{ key, text string }{
@@ -671,7 +819,7 @@ func (m Model) renderDetail(w int) string {
 	} else {
 		title = sBold.Render(p.Name) + "  " + sDim.Render("inspecting…")
 	}
-	head := ansi.Truncate(title, w, "…") + "\n" + ansi.Truncate(meta, w, "…") + "\n" + tabBar(m.tab, w) + "\n" + sDim.Render(strings.Repeat("─", w))
+	head := ansi.Truncate(title, w, "…") + "\n" + ansi.Truncate(meta, w, "…") + "\n" + tabBar(m.visibleTabs(), m.tab, w) + "\n" + sDim.Render(strings.Repeat("─", w))
 	return lipgloss.NewStyle().Width(w).MaxWidth(w).Render(head + "\n" + m.detailRows())
 }
 
