@@ -402,3 +402,50 @@ func TestEndedPIDReusedDropsGhost(t *testing.T) {
 		t.Fatalf("PID 902 listed %d times", n)
 	}
 }
+
+func typeRunes(tm tea.Model, s string) tea.Model {
+	for _, r := range s {
+		tm, _ = tm.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{r}})
+	}
+	return tm
+}
+
+func TestFilterModeKeys(t *testing.T) {
+	tm := fakeModel()
+	tm = typeRunes(tm, "/")
+	if !tm.(Model).filtering {
+		t.Fatal("/ did not start filtering")
+	}
+	if out := ansi.Strip(tm.View()); !strings.Contains(out, "enter") || !strings.Contains(out, "ctrl+x") {
+		t.Fatalf("filter-mode footer missing hints:\n%s", out)
+	}
+
+	// a plain x is text for the filter, not a kill
+	tm = typeRunes(tm, "x")
+	if m := tm.(Model); m.kill != nil || m.filter.Value() != "x" {
+		t.Fatalf("x in filter mode: kill=%v filter=%q", m.kill != nil, m.filter.Value())
+	}
+	tm, _ = tm.Update(tea.KeyMsg{Type: tea.KeyEsc})
+	tm = typeRunes(tm, "/al")
+
+	// ctrl+x kills without leaving the filter
+	tm, _ = tm.Update(tea.KeyMsg{Type: tea.KeyCtrlX})
+	m := tm.(Model)
+	if m.kill == nil || m.kill.p.Name != "alpha" || !m.filtering {
+		t.Fatalf("ctrl+x: kill=%v filtering=%v", m.kill, m.filtering)
+	}
+	tm, _ = tm.Update(tea.KeyMsg{Type: tea.KeyEsc}) // cancel the prompt
+
+	// enter leaves filter mode, keeps the filter, and x now kills
+	tm, _ = tm.Update(tea.KeyMsg{Type: tea.KeyEnter})
+	if m := tm.(Model); m.filtering || m.filter.Value() != "al" {
+		t.Fatalf("after enter: filtering=%v filter=%q", m.filtering, m.filter.Value())
+	}
+	if out := ansi.Strip(tm.View()); !strings.Contains(out, "clear filter") {
+		t.Fatalf("applied filter has no 'clear filter' hint:\n%s", out)
+	}
+	tm = typeRunes(tm, "x")
+	if tm.(Model).kill == nil {
+		t.Fatal("x after enter did not open the kill prompt")
+	}
+}

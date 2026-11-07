@@ -424,6 +424,13 @@ func (m Model) handleKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			return m.move(-1)
 		case "down", "ctrl+n":
 			return m.move(1)
+		// keys that can't be typed into the filter still work while it is focused
+		case "ctrl+x":
+			return m.openKill()
+		case "tab":
+			return m.setTab((m.tab + 1) % tabCount)
+		case "shift+tab":
+			return m.setTab((m.tab + tabCount - 1) % tabCount)
 		}
 		var cmd tea.Cmd
 		m.filter, cmd = m.filter.Update(msg)
@@ -487,16 +494,7 @@ func (m Model) handleKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			return m, inspect(p, m.all)
 		}
 	case "x", "delete":
-		if p, ok := m.selected(); ok && m.isEnded(p) {
-			// its PID may already belong to another process, so never signal it
-			return m, m.setFlash(p.Name + " has already ended")
-		} else if ok {
-			var in *proc.Info
-			if c, ok := m.cache[p.Key()]; ok {
-				in = c.info
-			}
-			m.kill = newKillPrompt(p, m.all, in)
-		}
+		return m.openKill()
 	case "m":
 		m.nativeMouse = !m.nativeMouse
 		if m.nativeMouse {
@@ -523,6 +521,24 @@ func (m Model) handleKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			return m, m.setFlash("Opened web search for " + p.Name)
 		}
 	}
+	return m, nil
+}
+
+// openKill asks for confirmation before signalling the selected process.
+func (m Model) openKill() (tea.Model, tea.Cmd) {
+	p, ok := m.selected()
+	if !ok {
+		return m, nil
+	}
+	if m.isEnded(p) {
+		// its PID may already belong to another process, so never signal it
+		return m, m.setFlash(p.Name + " has already ended")
+	}
+	var in *proc.Info
+	if c, ok := m.cache[p.Key()]; ok {
+		in = c.info
+	}
+	m.kill = newKillPrompt(p, m.all, in)
 	return m, nil
 }
 
@@ -573,12 +589,22 @@ func (m Model) footer() string {
 	if m.kill != nil {
 		return sBad.Render("t terminate · k force kill · esc cancel")
 	}
+	if m.filtering {
+		return ansi.Truncate(sBold.Render("enter")+sDim.Render(" done typing (then x kills, s sorts…)")+sDim.Render(" · ")+
+			sBold.Render("esc")+sDim.Render(" clear filter")+sDim.Render(" · ")+
+			sBold.Render("↑↓")+sDim.Render(" select")+sDim.Render(" · ")+
+			sBold.Render("ctrl+x")+sDim.Render(" kill")+sDim.Render(" · ")+
+			sBold.Render("tab")+sDim.Render(" view"), m.width, "…")
+	}
 	// Hints are dropped right-to-left in this priority order when space is short.
 	hints := []struct{ key, text string }{
 		{"↑↓/click", "select"}, {"tab", "view"}, {"drag", "copy"}, {"/", "filter"}, {"x", "kill"},
 		{"s", "sort"}, {"a", "hide Apple"}, {"c", "copy path"}, {"f", "reveal"}, {"w", "web"}, {"m", "native select"}, {"q", "quit"},
 	}
-	drop := []string{"native select", "web", "reveal", "copy path", "hide Apple", "sort"}
+	if m.filter.Value() != "" {
+		hints = append([]struct{ key, text string }{{"esc", "clear filter"}}, hints...)
+	}
+	drop := []string{"native select", "web", "reveal", "copy path", "hide Apple", "sort", "clear filter"}
 	render := func(hs []struct{ key, text string }) string {
 		parts := make([]string, len(hs))
 		for i, h := range hs {

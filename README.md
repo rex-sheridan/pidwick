@@ -54,6 +54,8 @@ listening sockets). It is not an antivirus; each finding explains itself.
   terminate the process and all its descendants. It warns about system components, launchd
   auto-restart, other users' processes and child processes, and refuses PID 1 and Pidwick itself.
 
+While typing a filter, `enter` finishes (the filter stays, and `x`, `s`, … work again), `esc` clears it, `↑↓` still select, and `ctrl+x` kills and `tab` switches view without leaving the filter.
+
 `↑↓`/`jk` select · `tab`/`1-3` view · `J`/`K` scroll · `/` filter · `s` sort · `a` hide Apple/system ·
 `r` rescan selected · `f` reveal in Finder · `c` copy path · `w` web search · `q` quit
 
